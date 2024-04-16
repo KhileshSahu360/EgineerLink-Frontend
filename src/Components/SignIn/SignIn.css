@@ -1,0 +1,29 @@
+.sign_in{
+  min-width: 22rem;
+}
+.signin_form{
+  max-width: 23rem;
+}
+.verifyemail_form{
+  min-width: 22rem;
+}
+.resetpassword_form{
+  min-width: 22rem;
+}
+@media screen and (max-width:370px){
+  .signin{
+    max-width: 20rem !important;
+  }
+  .signin_form{
+    max-width: 19rem !important;
+  }
+  .verifyemail_form{
+    max-width: 19rem !important;
+  }
+  .resetpassword_form{
+    max-width: 19rem;
+  }
+  .newto_account{
+    font-size: .7rem !important;
+  }
+}

@@ -1,0 +1,124 @@
+.menu_item{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: .2rem;
+  flex: 1;
+}
+.menu_item span{
+  font-size: .7rem;
+  border: 1px solid white;
+}
+nav{
+  max-width: 1000px;
+}
+.menu_icon{
+  font-size: 1.2rem;
+  color: rgb(97, 95, 95);
+}
+.logo{
+  height: 2.3rem !important;
+}
+.input_field2{
+  width:100% !important;
+}
+.three_dot{
+  display: none;
+}
+@media screen and (max-width:1050px) {
+  nav{
+    gap: 2rem;
+  }
+  .menu_item span{
+    font-size:.6rem ;
+  }
+  
+}
+@media screen and (max-width:900px) {
+  .input_field{
+    display: none;
+  }
+  .left_nav{
+    width: 12% !important;
+  }
+  .search_icon{
+    font-size: 1.5rem !important;
+    position: absolute;
+    top:25% !important;
+  }
+  .icon_div{
+    height: 100% !important;
+  }
+}
+@media screen and (max-width:800px) {
+  .left_nav{
+    width: 15% !important;
+  }
+
+}
+@media screen and (max-width:700px) {
+  .left_nav{
+    width: 17% !important;
+  }
+}
+@media screen and (max-width:650px){
+  .left_nav{
+    width: 25% !important;
+  }
+  .removed_menu{
+    display: none;
+  }
+  .three_dot{
+    display: block;
+  }
+  .menu_item span{
+    display: none;
+  }
+  .mo_menu_link{
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .3rem;
+  }
+}
+@media screen and (max-width:430px){
+  .search_icon{
+    font-size: 1.3rem !important;
+    top: 28% !important;
+    left: .9rem !important;
+  }
+  nav{
+    max-width:90% !important ;
+  }
+  .left_nav{
+    width: 32% !important;
+    gap: 0;
+  }
+  .logo{
+    height: 2rem !important;
+  }
+}
+@media screen and (max-width:380px) {
+  .logo{
+    height: 2rem !important;
+  }
+  .left_nav{
+    width: 28% !important;
+    gap: 0;
+  }
+}
+@media screen and (max-width:350px) {
+  .logo{
+    height: 1.8rem !important;
+  }
+  .left_nav{
+    width: 25% !important;
+  }
+  .search_icon{
+    font-size: 1.1rem !important;
+    top: 32% !important;
+    left: .8rem !important;
+  }
+}
