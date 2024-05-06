@@ -9,6 +9,7 @@ import Toastify from '../Toastify/Toastify';
 import { ErrorToastify } from '../Toastify/Toastify';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
+import googleLogo from '../../assets/logo/googleLogo.png';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -16,7 +17,9 @@ const SignIn = () => {
   const [tokenError,setTokenError] = useState(false);
   const [isSigninSuccess,setIsSigninSuccess] = useState(false);
   const [emailNotMatch,setEmailNotMatch] = useState(false);
+  const [loginGoogleError,setLoginGoogleError] = useState(false);
   const [passNotMatch,setPassNotMatch] = useState(false);
+  const [verifyError,setVerifyError] = useState(false);
   const [unsuccessSignin,setUnsuccessSignin] = useState(false);
   const emailRef = useRef('');
   const passwordRef = useRef('');
@@ -26,9 +29,11 @@ const SignIn = () => {
   const falseToastify = () => {
     setTokenError(false);
     setIsSigninSuccess(false);
+    setLoginGoogleError(false);
     setEmailNotMatch(false);
     setPassNotMatch(false);
     setUnsuccessSignin(false);
+    setVerifyError(false)
   }
   const eyesClick = () => {
     if(passwordRef.current.type === 'password'){
@@ -60,17 +65,25 @@ const SignIn = () => {
             localStorage.setItem('token',response.token);
             setIsSigninSuccess(true);
             setTimeout(()=>{
-              navigate('/');
+              navigate('/profile');
             },1000)
           }
           if(response.error === 'email error'){
             setLoading(false);
             setEmailNotMatch(true);
-          }else if(response.error === 'password error'){
+          }else if(response.error === 'loginwithgoogle'){
+            setLoading(false);
+            setLoginGoogleError(true);
+          }
+          else if(response.error === 'password error'){
             setLoading(false);
             setPassNotMatch(true);
           }else if(response.error === 'token'){
+            setLoading(false);
             setTokenError(true)
+          }else if(response.error === 'verification error'){
+            setLoading(false);
+            setVerifyError(true);
           }
         }catch(err){
           console.log(err)
@@ -81,8 +94,13 @@ const SignIn = () => {
       setEmptyAlert(true);
     }
   }
+  const googleClick = async() => {
+    const rawResponse = await fetch('http://localhost:3000/auth/google');
+    const response = await rawResponse.json();
+    console.log('googleClick');
+  }
   return (
-<div className=' h-full flex flex-col gap-5 justify-center items-center sign_in'>
+<div className=' h-screen flex flex-col gap-5 justify-center items-center sign_in'>
   <div>
     <img className="cursor-pointer h-9" src={EngineerLinkLogo} alt=""/>
   </div>
@@ -110,14 +128,19 @@ const SignIn = () => {
     </span>
     {isSigninSuccess && <Toastify deActivate={falseToastify} time={1000} msg={'Congratulation! Sign in successfully'}/>}
     {emailNotMatch && <ErrorToastify time={3000} deActivate={falseToastify} msg={'Incorrect email id!'}/>}
+    {loginGoogleError && <ErrorToastify time={3000} deActivate={falseToastify} msg={'Please Login with Google!'}/>}
     {passNotMatch && <ErrorToastify time={3000} deActivate={falseToastify} msg={'Incorrect password!'}/>}
     {unsuccessSignin &&  <ErrorToastify time={3000} deActivate={falseToastify} msg={'Something wrong! Try Again'}/>}
     {tokenError &&  <ErrorToastify time={3000} deActivate={falseToastify} msg={'Please try After some times!'}/>}
+    {verifyError &&  <Toastify time={5000} deActivate={falseToastify} msg={'Verify your Email! Sent to your email'}/>}
   </form>
   <span>OR</span>
+  <div className="relative w-[90%] flex justify-center">
+    <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href="http://localhost:3000/auth/google"><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
+  </div>
 </div>
 
   )
 }
 
-export default SignIn
+export default SignIn;

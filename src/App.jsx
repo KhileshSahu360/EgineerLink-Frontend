@@ -31,7 +31,7 @@ function App() {
   },[])
   return (
     <>
-        <div className='h-screen bg-bgColor App'>
+        <div className='min-h-screen pb-4 bg-bgColor App'>
           <Outlet/>
         </div>
     </>

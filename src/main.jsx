@@ -17,15 +17,18 @@ import store from './Components/Store/Store.jsx';
 import ResetPassword from './Components/VerifyEmail/ResetPassword.jsx';
 import SendMail from './Components/VerifyEmail/SendMail.jsx';
 import AccountActivation from './Components/VerifyEmail/AccountActivation.jsx';
+import ServerError from './Components/Error/ServerError.jsx';
 
 const router = createBrowserRouter(
   [
+    {path : '/accountactivation/:id/:token',element : <AccountActivation/>},
+    {path : '/resetpassword/:id/:token',element : <ResetPassword/>},
+    {path : '/servererror',element : <ServerError/>},
     {path : '/', element : <App/>,
     children:[
       {path : '/signin',element : <SignIn/>},
       {path : '/signup',element : <SignUp/>},
       {path : '/signin/sendmail',element : <SendMail/>},
-      {path : '/accountactivation',element : <AccountActivation/>},
       {path : '/resetpassword',element : <ResetPassword/>},
       {path : '/',element:<MainPageCont/>,
        children:[

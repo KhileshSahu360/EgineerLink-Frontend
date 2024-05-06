@@ -1,0 +1,6 @@
+@media screen and (max-width:800px) {
+  .main_container{
+    min-width: 100vw !important;
+  }
+  
+}

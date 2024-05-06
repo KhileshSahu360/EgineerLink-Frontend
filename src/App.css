@@ -8,3 +8,9 @@
   align-items: center;
   gap: 1.8rem;
 }
+@media screen and (max-width:800px) {
+  .App{
+    gap: 0rem !important;
+  }
+  
+}
