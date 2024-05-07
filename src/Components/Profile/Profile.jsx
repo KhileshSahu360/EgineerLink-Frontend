@@ -6,11 +6,15 @@ import { LuSchool } from "react-icons/lu";
 import { GiSkills } from "react-icons/gi";
 import { IoMdAdd } from "react-icons/io";
 import './Profile.css';
+import { Button } from '../ui/button';
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSeeMoreButton,setShowSeeMoreButton] = useState(false);
   const aboutContentRef = useRef(null);
+  const [education, setEducation] = useState([{subTitle:'boys school',description:'higher secondary'},{subTitle:'polytechnic college',description:'higher secondary'}]); 
+  const [experience, setExperience] = useState([{subTitle:'i have one month good experience in web development',description:'SEED IT SOLUTION'},{subTitle:'1 year experince in riverhouse technology',description:'RIVERHOUSE TECHNOLOGY'}]); 
+  const [skill, setSkill] = useState([{subTitle:'MongoDB',description:'1 Month good'},{subTitle:'ExpressJS',description:'1 Month good'}]); 
   useEffect(()=>{
     if(aboutContentRef){
       setShowSeeMoreButton(aboutContentRef.current.scrollHeight !== aboutContentRef.current.clientHeight)
@@ -59,9 +63,51 @@ const Profile = () => {
             {showSeeMoreButton && <button className='absolute bottom-0 right-[-10%] opacity-70' onClick={()=>setIsOpen(!isOpen)}>{isOpen?'see less':'see more'}</button>}
           </div>
       </div>
-      <ProfileSection title={'Educations'} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={'government polytechnic khairagarh'} description={'computer science'}/>
-      <ProfileSection title={'Experience'} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={'I have working 3 months of experience'} description={'SEED IT SOLUTION'}/>
-      <ProfileSection title={'Skills'} subTitle={'React'} description={'i have one month '}/>
+      <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
+          <div className='flex justify-between px-6 py-2'>
+            <label htmlFor="" className='font-medium text-xl'>Educations</label>
+            <div className='flex gap-1'>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><IoMdAdd fontSize={'1.4rem'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><GoPencil fontSize={'1.4rem'}/></label>
+            </div>
+          </div>
+          {
+            education.map((elm, index)=>{
+              return <ProfileSection title={'Educations'} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={elm.subTitle} description={elm.description}/>
+            })
+          }
+      </div>
+      <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
+          <div className='flex justify-between px-6 py-2'>
+            <label htmlFor="" className='font-medium text-xl'>Experience</label>
+            <div className='flex gap-1'>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><IoMdAdd fontSize={'1.4rem'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><GoPencil fontSize={'1.4rem'}/></label>
+            </div>
+          </div>
+          {
+            experience.map((elm, index)=>{
+              return <ProfileSection title={'Experience'} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={elm.subTitle} description={elm.description}/>
+            })
+          }
+      </div>
+      <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
+          <div className='flex justify-between px-6 py-2'>
+            <label htmlFor="" className='font-medium text-xl'>Skills</label>
+            <div className='flex gap-1'>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><IoMdAdd fontSize={'1.4rem'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><GoPencil fontSize={'1.4rem'}/></label>
+            </div>
+          </div>
+          {
+            skill.map((elm, index)=>{
+              return <ProfileSection title={'Skills'} subTitle={elm.subTitle} description={elm.description}/>
+            })
+          }
+      </div>
+
+      
+      
     </div>
   )
 }
@@ -69,15 +115,7 @@ const Profile = () => {
 const ProfileSection = (props) => {
   return(
     <>
-      <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
-          <div className='flex justify-between px-6 py-2'>
-            <label htmlFor="" className='font-medium text-xl'>{props.title}</label>
-            <div className='flex gap-1'>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><IoMdAdd fontSize={'1.4rem'}/></label>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><GoPencil fontSize={'1.4rem'}/></label>
-            </div>
-          </div>
-          {/* Educations */}
+ 
           <div className='pl-6 mb-3  w-[70%] flex items-center'>
             <label htmlFor="">{props.icon}</label>
             <div className='ml-2'>
@@ -88,7 +126,6 @@ const ProfileSection = (props) => {
           <div className='px-7 mb-2'>
             <hr />
           </div>
-      </div>
     </>
   )
 }

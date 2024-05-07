@@ -17,6 +17,8 @@ const cookies = cookieString.split('; ');
       }
   }
   const token = tokenFromLocal || tokenFromCookie;
+
+// authentication token taking from localStorage
 const authSlice = createSlice({
   name : 'authSlice',
   initialState : {status : token},
