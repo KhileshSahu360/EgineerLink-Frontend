@@ -1,39 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
-import Cookie from 'js-cookie';
 
-// const token2 = Cookie.get('connect.sid');
-// console.log(token2);
-let tokenFromLocal = localStorage.getItem('token');
-tokenFromLocal = tokenFromLocal?true:false;
-let tokenFromCookie;
-const cookieString = document.cookie;
-const cookies = cookieString.split('; ');
-    for (let cookie of cookies) {
-      const [name, value] = cookie.split('=');
-      if (name === 'token') {
-        tokenFromCookie = true;
-        break;
-      }
-  }
-  const token = tokenFromLocal || tokenFromCookie;
+
+
+// data fetching section 
+const ProfileData  = () => {
+  
+}
+
 
 // authentication token taking from localStorage
-const authSlice = createSlice({
-  name : 'authSlice',
-  initialState : {status : token},
+const userDetailSlice = createSlice({
+  name : 'userDetailSlice',
+  initialState : {},
   reducers:{
-    setIsLoggedInOrNot : (status,action)=>{
-
+    setIdandName : (status,action)=>{
+      const userId = action.payload.id; 
+      const username = action.payload.username;
+      return {userId, username};
     }
   }
 })
+// profile page data
+
+
 
 const store = configureStore({
   reducer : {
-    authSlice : authSlice.reducer
+    userDetailSlice : userDetailSlice.reducer
   }
 });
 
 export default store;
-export const authAction = authSlice.actions;
+export const userDetailAction = userDetailSlice.actions;

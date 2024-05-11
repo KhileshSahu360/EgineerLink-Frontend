@@ -96,7 +96,7 @@ const Header = () => {
               <FaSearch
                 className={
                   windowWidth <= 900 && isShowInput
-                    ? "absolute top-3 left-5 text-sm text-gray-500"
+                    ? "absolute top-3  left-5 text-sm text-gray-500"
                     : "absolute top-3 left-5 text-sm text-gray-500 search_icon"
                 }
                 onClick={searchHandle}
@@ -253,7 +253,7 @@ const Header = () => {
         )}
       </nav>
       {backdrop && (
-        <div className="backdrop absolute h-[92vh] bg-[#00000059] w-full top-12"></div>
+        <div className="backdrop z-50 absolute h-[92vh] bg-[#00000059] w-full top-12"></div>
       )}
     </div>
   );
