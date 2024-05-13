@@ -3,7 +3,7 @@ import EngineerLinkLogo from '../../assets/logo/EngineerLinkLogo.svg'
 import Avatar from "../../assets/image/Avatar.png";
 import { GoPencil } from "react-icons/go";
 import { LuSchool } from "react-icons/lu";
-import { GiSkills } from "react-icons/gi";
+import { GiRailway, GiSkills } from "react-icons/gi";
 import { IoMdAdd } from "react-icons/io";
 import './Profile.css';
 import { Button } from '../ui/button';
@@ -20,6 +20,8 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { useSelector } from 'react-redux';
 import Loader from '../Loader/Loader';
+import Alerts from '../Alert/Alert';
+import { MdDelete } from "react-icons/md";
 
 
 
@@ -56,10 +58,6 @@ const Profile = () => {
     setExperience(dbExperience);
     setSkill(dbSkill);
     setAbout(about);
-    console.log(dbEducation);
-    console.log(dbExperience);
-    console.log(dbSkill);
-    console.log(about);
   }
   
   const seeMoreStyle = { 
@@ -68,6 +66,7 @@ const Profile = () => {
     overflow:'hidden',
     display:'-webkit-box'
   }
+ 
   return (
     <div className='h-full'>
       <div className='h-[auto] pb-3 bg-white rounded-lg'>
@@ -98,7 +97,7 @@ const Profile = () => {
       <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
           <div className='flex justify-between px-6 py-2'>
             <label htmlFor="" className='font-medium text-xl'>About</label>
-            <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo userId={userId} aboutContent={about} title={'About'}/></label>
+            <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo getUserData={getUserData} userId={userId} aboutContent={about} title={'About'}/></label>
           </div>
           <div className='relative pl-6  w-[70%]'>
             <label ref={aboutContentRef} htmlFor="" style={isOpen?null:seeMoreStyle}>{about}</label>
@@ -109,13 +108,12 @@ const Profile = () => {
           <div className='flex justify-between px-6 py-2'>
             <label htmlFor="" className='font-medium text-xl'>Educations</label>
             <div className='flex gap-1'>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo type={'plus'} title={'Add Educations'}/></label>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo title={'Educations'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo getUserData={getUserData} userId={userId} type={'plus'} title={'Add Educations'}/></label>
             </div>
           </div>
           {
             education.length > 0 ? education.map((elm, index)=>{
-              return <ProfileSection key={index} title={'Educations'} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={elm.school} description={elm.field}/>
+              return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'education'} uniqueId={elm._id} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={elm.school} description={elm.field}/>
             }):
             <div className='flex justify-center '>
               <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Education Added! Please Add</label>
@@ -126,13 +124,12 @@ const Profile = () => {
           <div className='flex justify-between px-6 py-2'>
             <label htmlFor="" className='font-medium text-xl'>Experience</label>
             <div className='flex gap-1'>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo type={'plus'} title={'Add Experience'}/></label>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo title={'Experience'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo getUserData={getUserData} userId={userId} type={'plus'} title={'Add Experience'}/></label>
             </div>
           </div>
           {
             experience.length > 0 ? experience.map((elm, index)=>{
-              return <ProfileSection key={index} title={'Experience'} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={elm.company} description={elm.description}/>
+              return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'experience'} uniqueId={elm._id} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={elm.company} description={elm.description}/>
             }):
             <div className='flex justify-center '>
               <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Experience Added! Please Add</label>
@@ -143,13 +140,12 @@ const Profile = () => {
           <div className='flex justify-between px-6 py-2'>
             <label htmlFor="" className='font-medium text-xl'>Skills</label>
             <div className='flex gap-1'>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo type={'plus'} title={'Add Skills'}/></label>
-              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo title={'Skills'}/></label>
+              <label htmlFor="" className="hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo getUserData={getUserData} userId={userId} type={'plus'} title={'Add Skills'}/></label>
             </div>
           </div>
           {
             skill.length > 0 ? skill.map((elm, index)=>{
-              return <ProfileSection key={index} title={'Skills'} subTitle={elm.skillname} description={elm.description}/>
+              return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'Skill'} uniqueId={elm._id} subTitle={elm.skillname} description={elm.description}/>
             }):
             <div className='flex justify-center '>
               <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Skill Added! Please Add</label>
@@ -164,13 +160,26 @@ const Profile = () => {
 }
 
 const ProfileSection = (props) => {
+  const handleDelete = async(uniqueId, apiName, userId) => {
+    console.log(uniqueId, apiName, userId);
+    const rawResponse = await fetch(`http://localhost:3000/user/delete${apiName}/${userId}/${uniqueId}`);
+    const response = await rawResponse.json();
+    if(response.status){
+      props.getUserData();
+    }else{
+      alert('failed');
+    }
+  }
   return(
     <>
  
-          <div className='pl-6 mb-3  w-[70%] flex items-center'>
+          <div className='pl-6 mb-3  w-[100%] flex items-center'>
             <label htmlFor="">{props.icon}</label>
-            <div className='ml-2'>
-              <label htmlFor="" className='font-normal'>{props.subTitle}</label>
+            <div className='ml-2 w-full'>
+              <div className='relative '>
+                <label htmlFor="" className='font-normal'>{props.subTitle}</label>
+                <label onClick={()=>handleDelete(props.uniqueId, props.title, props.userId)} htmlFor="" className="hover:bg-[#ddd] absolute right-6 transition-all p-3 cursor-pointer rounded-full"><MdDelete color='red' fontSize={'1.3rem'}/></label>
+              </div>
               <p htmlFor="" className='opacity-50 mt-[-.1rem]'>{props.description}</p>
             </div>
           </div>
@@ -182,6 +191,7 @@ const ProfileSection = (props) => {
 }
 
  function DialogDemo(props) {
+  const { getUserData } = props;
   const aboutRef = useRef();
   const educationRefSchool = useRef();
   const educationRefField = useRef();
@@ -194,24 +204,73 @@ const ProfileSection = (props) => {
   const addExperienceRefDescription = useRef();
   const addSkillRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDataSaved, setIsDataSaved] = useState(false);
+  const[emptyAlert,setEmptyAlert] = useState(false);
+
+  const falseIsDataSaved = () => {
+    setIsDataSaved(false);
+  }
   const submitHandler = async(firstValue, secondValue, isDoubleField, isDelete, apiName, userId) => {
     // for the edit section
     if(!isDelete){
       if(isDoubleField){
-        console.log(firstValue,secondValue.current.value);
-      }else if(!isDoubleField){
-        if(apiName==='about'){
+        if(firstValue.current.value.length>0 && secondValue.current.value.length>0){
+          console.log(userId);
           setIsLoading(true);
-          const rawResponse = await fetch(`http://localhost:3000/user/setabout/${userId}`,{
+          const rawResponse = await fetch(`http://localhost:3000/user/${apiName}/${userId}`,{
             method:'post',
             headers:{
-              'Content-Type':'appication/json'
+              'Content-Type':'application/json'
             },
-            body:JSON.stringify({about:firstValue.current.value})
+            body:JSON.stringify({firstValue:firstValue.current.value,secondValue:secondValue.current.value})
           })
           const response = await rawResponse.json();
           setIsLoading(false);
           console.log(response);
+          if(response.status===true){
+            setIsDataSaved(true);
+            getUserData();
+          }
+      }else{
+        setEmptyAlert(true);
+      }
+      }else if(!isDoubleField){
+        if(firstValue.current.value.length > 0){
+          if(apiName==='about'){
+            setIsLoading(true);
+            const rawResponse = await fetch(`http://localhost:3000/user/setabout/${userId}`,{
+              method:'post',
+              headers:{
+                'Content-Type':'application/json'
+              },
+              body:JSON.stringify({about:firstValue.current.value})
+            })
+            const response = await rawResponse.json();
+            setIsLoading(false);
+            console.log(response);
+            if(response.status===true){
+              setIsDataSaved(true);
+              getUserData();
+            }
+          }else if(apiName==='addskill'){
+            setIsLoading(true);
+            const rawResponse = await fetch(`http://localhost:3000/user/addskill/${userId}`,{
+              method:'post',
+              headers:{
+                'Content-Type':'application/json'
+              },
+              body:JSON.stringify({skillname:firstValue.current.value})
+            })
+            const response = await rawResponse.json();
+            setIsLoading(false);
+            console.log(response);
+            if(response.status===true){
+              setIsDataSaved(true);
+              getUserData();
+            }
+          }
+        }else{
+          setEmptyAlert(true)
         }
       }
     }
@@ -221,11 +280,11 @@ const ProfileSection = (props) => {
     }
   }
   return (
-    <Dialog>
-      <DialogTrigger asChild className=''>
+    <Dialog >
+      <DialogTrigger onClick={()=>setIsDataSaved(false)} asChild className=''>
         <label htmlFor="" className="hover:bg-[#ddd] transition-all cursor-pointer ">{props.type==='plus'?<IoMdAdd fontSize={'1.4rem'}/>:<GoPencil fontSize={'1.4rem'}/>}</label>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent falseIsDataSaved={falseIsDataSaved} className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{props.type==='plus'?props.title:"Edit " + props.title}</DialogTitle>
           <DialogDescription>
@@ -235,15 +294,16 @@ const ProfileSection = (props) => {
         {
           props.title === 'About' ?
           <form onSubmit={(e)=>{e.preventDefault(); submitHandler(aboutRef, null, false, false,'about',props.userId)}}>
+                {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
             <div>
               <textarea ref={aboutRef} name="" className='border focus:border-slate-500 focus:outline-none rounded-sm resize-none w-full p-2 text-[.9rem]'  cols={10} id="">{props.aboutContent}</textarea>
             </div>
             <DialogFooter> 
-                      {/* <Sub */}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
           </form>
-          : props.title === 'Educations' ?
+          : props.title === 'Educations' ? 
+          <>
           <form onSubmit={(e)=>{e.preventDefault(); submitHandler(educationRefSchool, educationRefField, true, true)}}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -253,6 +313,7 @@ const ProfileSection = (props) => {
               <Input
                 id="name"
                 ref={educationRefSchool}
+                value={props.subTitle}
                 className="col-span-3"
                 />
             </div>
@@ -262,16 +323,18 @@ const ProfileSection = (props) => {
               </Label>
               <Input
                 id="username"
+                value={props.description}
                 ref={educationRefField}
                 className="col-span-3"
                 />
             </div>
           </div>
           <DialogFooter> 
-                      {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
+                      {props.type!=='plus' && <SubmitButton isDataSaved={isDataSaved} color={'red'} isLoading={isLoading}/>}
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
           </form>
+          </>
           : props.title === 'Experience' ?
           <form onSubmit={(e)=>{e.preventDefault(); submitHandler(experienceRefCompany, experienceRefDescription, true, true)}}>
             <div className="grid gap-4 py-4">
@@ -297,8 +360,8 @@ const ProfileSection = (props) => {
                 </div>
           </div>
           <DialogFooter> 
-                      {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
+                      {props.type!=='plus' && <SubmitButton isDataSaved={isDataSaved} color={'red'} isLoading={isLoading}/>}
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
           </form>
           :
@@ -318,16 +381,17 @@ const ProfileSection = (props) => {
             </div>
           </div>
           <DialogFooter> 
-                      {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
+                      {props.type!=='plus' && <SubmitButton isDataSaved={isDataSaved} color={'red'} isLoading={isLoading}/>}
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
           </form>
           : ''
         }
           {props.type === 'plus' ?
             props.title === 'Add Educations'?
-            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addEducationRefSchool, addEducationRefField, true, false)}}>
+            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addEducationRefSchool, addEducationRefField, true, false, 'addeducation', props.userId)}}>
                 <div className="grid gap-4 py-4">
+                {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                   <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
                     School/College
@@ -350,13 +414,14 @@ const ProfileSection = (props) => {
                 </div>
               </div>
               <DialogFooter> 
-                      {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
-              </DialogFooter>
+                      {props.type!=='plus' && <SubmitButton isDataSaved={isDataSaved} color={'red'} isLoading={isLoading}/>}
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
+          </DialogFooter>
           </form>
             :
             props.title === 'Add Experience'?
-            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addExperienceRefCompany, addExperienceRefDescription, true, false)}}>
+            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addExperienceRefCompany, addExperienceRefDescription, true, false, 'addexperience', props.userId)}}>
+                {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
@@ -380,15 +445,16 @@ const ProfileSection = (props) => {
                 </div>
           </div>
           <DialogFooter> 
-                      {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
-                      <Button type="submit" className="bg-mainColor">Save changes</Button>
+                      {props.type!=='plus' && <SubmitButton isDataSaved={isDataSaved} color={'red'} isLoading={isLoading}/>}
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
          
             </form>
             :
             props.title === 'Add Skills'?
             <>
-              <form onSubmit={(e)=>{e.preventDefault();submitHandler(addSkillRef, null, false, false)}}>
+              <form onSubmit={(e)=>{e.preventDefault();submitHandler(addSkillRef, null, false, false, 'addskill',props.userId)}}>
+              {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                           <div className="grid gap-4 py-4">
                           <div className="flex items-center gap-6">
                           <Label htmlFor="name" className="text-right">
@@ -399,14 +465,13 @@ const ProfileSection = (props) => {
                             className="col-span-3"
                             ref={addSkillRef}
                           />
-                          <Button>Add</Button>
                         </div>
                       </div>
           
                     <DialogFooter> 
                       {props.type!=='plus' && <Button type="submit" className="bg-[red]">Delete</Button>}
                       {/* <Button type="submit" className="bg-mainColor">Save changes</Button> */}
-                      <SubmitButton isLoading={isLoading}/>
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
                     </DialogFooter>
               </form>
             </>
@@ -419,9 +484,9 @@ const ProfileSection = (props) => {
   )
 }
 
-const SubmitButton = ({isLoading}) => {
+const SubmitButton = ({color, type, isLoading, isDataSaved}) => {
   return(
-    <Button type="submit" classNam-e="bg-mainColor">{isLoading?<Loader/>:'Save changes'}</Button>
+    <Button type="submit" disabled={isDataSaved?true:false} className={color==='red'?"bg-[red]":"bg-mainColor"}>{isLoading?<Loader/>:color==='red'?'Delete':isDataSaved?'Saved':type==='plus'?'   Add   ':'Save changes'}</Button>
   )
 }
 export default Profile
