@@ -44,7 +44,7 @@ const SendMail = () => {
     }
   }
   return (
-    <div className=' h-full flex flex-col gap-5 justify-center items-center sign_up'>
+    <div className=' h-[100vh] flex flex-col gap-5 justify-center items-center sign_up'>
       <div>
         <img className="cursor-pointer h-9" src={EngineerLinkLogo} alt=""/>
       </div>

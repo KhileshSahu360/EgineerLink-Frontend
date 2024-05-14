@@ -1,0 +1,31 @@
+.topcont img{
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+}
+.topcont{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.topcont h1{
+    font-weight: 300 !important;
+}
+.topcont p{
+    margin: 0% !important;
+    color: black;
+}
+.startpost img{
+    height: 50px;
+    width: 50px;
+}
+
+.startpost{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

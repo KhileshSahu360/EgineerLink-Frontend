@@ -1,0 +1,45 @@
+*{
+    box-sizing: border-box;
+}
+
+.proleft{
+    width: 100%;
+   text-align: center;
+    height: 410px;
+}
+.proright{
+    width: 100%;
+
+}
+.protop{
+    height: 200px;
+ 
+}
+
+
+.proleft .probottom h1{
+    margin-top: 25px;
+    font-size: 30px;
+}
+.id img{
+    height:100px;
+    width:100px;
+    border-radius: 50%;
+}
+
+.container{
+    width: 60%;
+    margin-top: 50px;
+}
+
+.main{
+    display: flex;
+    justify-content: center;
+    background-color: antiquewhite;
+}
+
+.btncen{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}

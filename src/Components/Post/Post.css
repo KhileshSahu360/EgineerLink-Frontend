@@ -1,0 +1,86 @@
+.userDetails{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 180px;
+}
+.userDetails h3{
+    font-weight: 700;
+    font-size: 20px;
+}
+.userDetails h3 span{
+    font-weight: 450;
+}
+.profileImg .cover{
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+}
+.top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.message{
+    margin: 5px !important; 
+    font-size: 20px;
+}
+
+.imgBg .cover{
+    width: 100%;
+}
+
+
+.btns .left{
+    width: 90px; 
+    display: flex;
+    justify-content: space-between;
+}
+.btns .left img{
+    width: 35px;   
+}
+.btns .right img{
+    width: 40px;   
+}
+.btns{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.likes{
+    margin: 5px; 
+    font-size: 25px;
+}
+.comments{
+    margin-top: 5px;
+    font-size: 25px;
+}
+
+.userImg .cover{
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    overflow: hidden;
+    margin-top: 0px !important;
+}
+.addComments{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.addComments .text{
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: 400;
+    font-size: 25px;
+    color: #262626;
+    margin-left: 5px;
+    
+}
+.postTime{
+    margin-top: 10px;
+    font-weight: 500;
+    color: #777;
+    font-size: 20px;
+}
