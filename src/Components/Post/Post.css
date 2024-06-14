@@ -51,10 +51,6 @@
     margin: 5px; 
     font-size: 25px;
 }
-.comments{
-    margin-top: 5px;
-    font-size: 25px;
-}
 
 .userImg .cover{
     height: 50px;
@@ -66,7 +62,6 @@
 .addComments{
     display: flex;
     align-items: center;
-    margin-top: 10px;
 }
 .addComments .text{
     width: 100%;
@@ -84,3 +79,65 @@
     color: #777;
     font-size: 20px;
 }
+
+/* createPost design */
+.textarea-container {
+    position: relative;
+    max-width: 100%; /* Adjust width as needed */
+  }
+  
+  .hidden-textarea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* opacity: 0; */
+    /* pointer-events: none; */
+    text-wrap: wrap;
+    resize: none;
+    overflow: hidden;
+  }
+  
+  .visible-div {
+    max-width: 100%;
+    /* text-wrap: wrap; */
+    min-height: 1.5rem; /* Height for one line */
+    padding: 0.6rem;
+    box-sizing: border-box;
+    white-space: pre-wrap; /* Preserve whitespace and wrap text */
+    word-wrap: break-word; /* Allow long words to break */
+  }
+/* responsive */
+@media screen and (max-width:600px) {
+    .dialog_content{
+      min-width:95% !important; 
+      max-width: 95% !important;
+    }
+  }
+@media screen and (max-width:800px) {
+    .heading{
+      font-size: .7rem !important;
+    }
+    .name{
+      font-size: 1.2rem !important;
+    }
+  }
+  @media screen and (max-width:1000px) {
+    .dialog_content{
+      min-width:80% !important; 
+      max-width: 80% !important;
+    }
+  }
+  @media screen and (max-width:1500px) {
+    .dialog_content{
+      min-width:60% ; 
+      max-width:60% ; 
+    }
+  }
+  @media screen and (max-width:2500px) {
+    .dialog_content{
+      min-width:50% ; 
+      max-width:50% ; 
+    }
+  }

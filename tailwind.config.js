@@ -17,8 +17,17 @@ module.exports = {
       },
     },
     extend: {
+      boxShadow: {
+        'shadow': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      },
+      height: {
+        'messageHeight' : 'calc(100vh - 90px)'
+      },
       colors: {
+        chatSecondarayColor :'#f0f2f5',
         mainColor:'#b200b5',
+        instaBlueColor:'#0195f7',
+        instaWhiteColor:'#efefef',
         bgColor:'#f4f2ee',
         searchBg:'#ffe8ff',
         border: "hsl(var(--border))",
@@ -76,5 +85,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),require('daisyui'),],
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Header.css";
 import LinkLogo from "../../assets/logo/LinkLogo.svg";
-import Avatar from "../../assets/image/Avatar.png";
 import { FaSearch } from "react-icons/fa";
 import { AiFillHome } from "react-icons/ai";
 import { FaPeopleRoof } from "react-icons/fa6";
@@ -14,14 +13,24 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useLocation, useNavigate } from "react-router-dom";
+import UnknownAvatar from '../../../public/Unknown.jpg'
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-const Header = () => {
+const Header = ({selectedTab}) => {
+  const navigate = useNavigate();
   const [isShowInput, setIsShowInput] = useState(false);
   const [shouldFocus, setShouldFocus] = useState(false);
   const [backdrop, setBackdrop] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const inputRef = useRef(null);
+  const [userData, setUserData] = useState(null);
+  var localUserId;
   useEffect(() => {
+     localUserId = localStorage.getItem('v09userInfoId');
+    if(localUserId){
+      getLocalUserData();
+    }
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
@@ -31,6 +40,21 @@ const Header = () => {
     };
   }, []);
 
+  const getLocalUserData = async() => {
+    try{
+      const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${localUserId}`);
+      const response = await rawResponse.json();
+      const { user } = response;
+      if(user){
+        setUserData(user);
+      }else{
+        navigate('/signin');
+      }
+    }catch(error){
+      navigate('/404error');
+    }
+    }
+  
   useEffect(() => {
     if (shouldFocus && inputRef.current) {
       inputRef.current.focus();
@@ -38,7 +62,6 @@ const Header = () => {
     }
   }, [shouldFocus]);
 
-  const [selectedTab, setSelectedTab] = useState("Home");
   const searchHandle = () => {
     if (windowWidth <= 900 && !isShowInput) {
       setIsShowInput(true);
@@ -109,18 +132,17 @@ const Header = () => {
             <Link
               to="/"
               className="menu_item h-full"
-              onClick={() => setSelectedTab("Home")}
             >
               <AiFillHome
                 className="menu_icon"
                 style={{
-                  color: selectedTab === "Home" ? "black" : "rgb(97, 95, 95)",
+                  color: selectedTab === "" ? "black" : "rgb(97, 95, 95)",
                 }}
               />
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "Home" ? "2px solid black" : "none",
+                    selectedTab === "" ? "2px solid black" : "none",
                 }}
               >
                 {" "}
@@ -130,19 +152,18 @@ const Header = () => {
             <Link
               to="/mynetwork"
               className="menu_item"
-              onClick={() => setSelectedTab("My Network")}
             >
               <FaPeopleRoof
                 className="menu_icon"
                 style={{
                   color:
-                    selectedTab === "My Network" ? "black" : "rgb(97, 95, 95)",
+                    selectedTab === "mynetwork" ? "black" : "rgb(97, 95, 95)",
                 }}
               />
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "My Network" ? "2px solid black" : "none",
+                    selectedTab === "mynetwork" ? "2px solid black" : "none",
                 }}
               >
                 My Network
@@ -151,13 +172,12 @@ const Header = () => {
             <Link
               to="/notifications"
               className="menu_item"
-              onClick={() => setSelectedTab("Notifications")}
             >
               <IoNotifications
                 className="menu_icon"
                 style={{
                   color:
-                    selectedTab === "Notifications"
+                    selectedTab === "notifications"
                       ? "black"
                       : "rgb(97, 95, 95)",
                 }}
@@ -165,7 +185,7 @@ const Header = () => {
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "Notifications"
+                    selectedTab === "notifications"
                       ? "2px solid black"
                       : "none",
                 }}
@@ -176,13 +196,12 @@ const Header = () => {
             <Link
               to="/collabcoding"
               className="menu_item removed_menu"
-              onClick={() => setSelectedTab("Collab Coding")}
             >
               <FaCode
                 className="menu_icon"
                 style={{
                   color:
-                    selectedTab === "Collab Coding"
+                    selectedTab === "collabcoding"
                       ? "black"
                       : "rgb(97, 95, 95)",
                 }}
@@ -190,7 +209,7 @@ const Header = () => {
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "Collab Coding"
+                    selectedTab === "collabcoding"
                       ? "2px solid black"
                       : "none",
                 }}
@@ -201,19 +220,18 @@ const Header = () => {
             <Link
               to="message"
               className="menu_item removed_menu"
-              onClick={() => setSelectedTab("Message")}
             >
               <AiFillMessage
                 className="menu_icon"
                 style={{
                   color:
-                    selectedTab === "Message" ? "black" : "rgb(97, 95, 95)",
+                    selectedTab === "message" ? "black" : "rgb(97, 95, 95)",
                 }}
               />
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "Message" ? "2px solid black" : "none",
+                    selectedTab === "message" ? "2px solid black" : "none",
                 }}
               >
                 Message
@@ -222,13 +240,16 @@ const Header = () => {
             <Link
               to="profile"
               className="menu_item removed_menu"
-              onClick={() => setSelectedTab("Me")}
             >
-              <img src={Avatar} alt="" className="size-5" />
+              {userData ? 
+                    <img src={userData.avatar} alt="" className="h-5 rounded-full" />
+                    :
+                    <img src={UnknownAvatar} alt="" className="h-5 rounded-full"/>
+                      }
               <span
                 style={{
                   borderBottom:
-                    selectedTab === "Me" ? "2px solid black" : "none",
+                    selectedTab === "profile" ? "2px solid black" : "none",
                 }}
               >
                 Me

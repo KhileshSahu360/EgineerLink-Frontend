@@ -1,0 +1,30 @@
+
+@media screen and (max-width: 550px) {
+  .people_container {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+  }
+}
+@media screen and (max-width: 350px) {
+  .people_card_container {
+    width: 8rem !important;
+  }
+}
+@media screen and (max-width: 300px) {
+  .people_card_container {
+    width: 7rem !important;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .tab_content {
+    width: 90% !important;
+    border-radius: 0px !important;
+  }
+}
+@media screen and (max-width: 800px) {
+  .tab_content {
+    width: 100% !important;
+    border-radius: 0px !important;
+  }
+}

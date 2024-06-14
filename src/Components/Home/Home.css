@@ -43,3 +43,11 @@
     justify-content: center;
     margin-top: 30px;
 }
+@media screen and (max-width:800px){
+    .welcome_container{
+        width:100% !important;
+    }
+    .item_post{
+        width: 100% !important;
+    }
+}

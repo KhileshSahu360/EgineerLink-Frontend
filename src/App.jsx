@@ -7,7 +7,7 @@ import MainPageCont from './Components/Main/MainPageCont'
 import { Outlet } from 'react-router-dom'
 import SignIn from './Components/SignIn/SignIn'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { userDetailAction } from './Components/Store/Store'
 
@@ -49,8 +49,10 @@ const cookies = cookieString.split('; ');
       if(user){
         localStorage.removeItem('v09userInfoId');
         localStorage.removeItem('v09userInfoName');
-        localStorage.setItem('v09userInfoId',user.id);
-        localStorage.setItem('v09userInfoName',user.username);
+        localStorage.setItem('v09userInfoId',user._id);
+        localStorage.setItem('v09userInfoName',user.name);
+        dispatch(userDetailAction.setDetail(user));
+        
       }else{
         localStorage.removeItem('v09userInfoId');
         localStorage.removeItem('v09userInfoName');
@@ -61,6 +63,7 @@ const cookies = cookieString.split('; ');
       navigate('/signin');
     }
   }
+  console.log(import.meta.env.VITE_HII)
   useEffect(()=>{
     isTokenValid();
   },[])

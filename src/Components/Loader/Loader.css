@@ -1,0 +1,11 @@
+.sl-spinner3{
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* display: none !important; */
+}
+.sl-loader-parent{
+  position: absolute !important;
+  top: -200% !important;
+  left: -210% !important;
+}

@@ -97,7 +97,6 @@ const SignIn = () => {
   const googleClick = async() => {
     const rawResponse = await fetch('http://localhost:3000/auth/google');
     const response = await rawResponse.json();
-    console.log('googleClick');
   }
   return (
 <div className=' h-screen flex flex-col gap-5 justify-center items-center sign_in'>

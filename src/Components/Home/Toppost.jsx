@@ -1,17 +1,21 @@
 import React from 'react'
 import "./Toppost.css"
-import { Button } from "@mui/material";
+import { Button, ButtonBase } from "@mui/material";
+import { Link } from 'react-router-dom';
+import CreatePost from '../Post/CreatePost';
 
-function Toppost() {
+function Toppost({name, getUserData, localUserId, profileImage}) {
   return (
     <div>
         <div className="topcont">
-            <img src="https://wallpapers.com/images/featured/professor-money-heist-1yegj3ptnd8g5noc.jpg"/>
-            <h1>Hi P., are you hiring?</h1>
+           <Link to={`/seeuserprofile/${localUserId}`}>
+            <img src={profileImage}/>
+          </Link>
+            <h1>Hi {name}, Welcome to Engineer Link ?</h1>
             <p>Discover free and easy ways to find a great hire, fast. </p>
-            <div className="startpost">
-                <img src="User.jpg"/>
-                <Button variant="outlined" style={{width:'80%',height:'40px'}}size="large">Start a Post</Button>
+            <div className="startpost gap-2">
+                <img src={profileImage}/>
+                <Button variant="outlined" style={{width:'80%',height:'40px'}}size="large"><CreatePost title={'Start a post'} getUserData={getUserData} name={name} localUserId={localUserId} profileImage={profileImage}/></Button>
             </div>
         </div>
     </div>

@@ -8,3 +8,15 @@
     max-width: 50% !important;
   }
 }
+.profile_div{
+  border-radius: 50% !important;
+}
+.Avatar{
+  border-radius: 50% !important;
+  height: 9rem !important;
+  width: 9rem !important;
+}
+
+.post_img_div{
+    min-width:5rem !important;
+}

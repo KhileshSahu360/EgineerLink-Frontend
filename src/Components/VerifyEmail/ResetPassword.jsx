@@ -46,7 +46,6 @@ const ResetPassword = () => {
   };
   const submitHandler = async (event) => {
     event.preventDefault();
-    console.log("submit click");
     const password = newpassRef.current.value;
     const confirmPassword = confirmpassRef.current.value;
     if (password.length > 0 && confirmPassword.length > 0) {

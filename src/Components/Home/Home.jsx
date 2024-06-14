@@ -8,6 +8,14 @@ import Post from '../Post/Post'
 import Toppost from "./Toppost";
 import Button from '@mui/material/Button'; // Import Button from @mui/material
 import LogoutIcon from '@mui/icons-material/Logout';
+import Loader, { FadLoader } from "../Loader/Loader";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { userDetailAction } from "../Store/Store";
+import { AlertDialog } from "../ui/alert-dialog";
+import Logout from "../Profile/Logout";
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 
 const Item = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(2),
@@ -15,12 +23,16 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 // Define Postcont as a component
-function Postcont() {
+function Postcont(props) {
+    const [demo, setDemo] = React.useState(false);
+    React.useEffect(()=>{
+        setDemo(true);
+    },[])
     return (
-        <Item style={{ marginTop: '20px' }}>
+        <Item style={{ marginTop: '20px' }} className="w-[80%] item_post">
             <div className="proright">
                 <div>
-                    <Post />
+                    <Post postData={props} demo={demo} getPost={props.getPost}/>
                 </div>
             </div>
         </Item>
@@ -28,9 +40,111 @@ function Postcont() {
 }
 
 export default function Home() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [isPostResult, setIsPostResult] = React.useState(false);
+    const [isUserResult, setIsUserResult] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [userData, setUserData] = React.useState({});
+    const [postData, setPostData] = React.useState([]);
+    const [localUserId, setLocalUserId] = React.useState(() => localStorage.getItem('v09userInfoId'));
+    const [hasMore, setHasMore] = React.useState(true);
+    const [excludeIds, setExcludeIds] = React.useState([]);
+
+    React.useEffect(() => {
+        const checkLocalStorage = () => {
+          const userId = localStorage.getItem('v09userInfoId');
+          if (userId) {
+            setLocalUserId(userId);
+          }
+        };
+    
+        const intervalId = setInterval(checkLocalStorage, 1000); // Check every 1 second
+    
+        return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+      }, []);
+  
+      React.useEffect(() => {
+        if (localUserId) {
+            setIsLoading(true);
+          getUserData();
+          getAllPost();
+          setIsLoading(false);
+
+        }
+      }, [localUserId]);
+  
+    const getAllPost = async() => {
+        try{
+        const response = await fetch(`http://localhost:3000/post/getallpost`,{
+            method : 'post',
+            headers : {
+                'Content-Type' : 'application/json'
+            },
+            body : JSON.stringify({excludeIds})
+        });
+        const data = await response.json();
+        if(!data.error){
+        const newPosts = data.post;
+        // setPostData((prevPosts) => [...prevPosts, ...newPosts]);
+        setPostData((prevPosts) => {
+            const existingPostIds = new Set(prevPosts.map(post => post._id));
+            const filteredNewPosts = newPosts.filter(post => !existingPostIds.has(post._id));
+            return [...prevPosts, ...filteredNewPosts];
+        });
+
+        setExcludeIds((prevExcludeIds) => [...prevExcludeIds, ...newPosts.map(post => post._id)]);
+        
+        setHasMore(newPosts.length > 0);
+        }else{
+            navigate('/404error');
+        }
+    }catch(error){
+        navigate('/servererror');
+    }
+    setIsPostResult(true);
+}
+      
+
+    const getUserData = async() => {
+        try{
+          const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${localUserId}`,{
+            method : 'get',
+            headers : {
+              'Content-Type' : 'application/json'
+            }
+          })
+          const response = await rawResponse.json();
+          const { user } = response;
+          if(user){
+            setUserData(user);
+        
+          }else{
+            navigate('/signin');
+          }
+        }catch(error){
+          navigate('/404error');
+        }
+        setIsUserResult(true);
+        }
+
+        const fetchMorePostData = () => {
+            getAllPost();
+        }
     return (
-          
-                <Box sx={{ flexGrow: 1 }}>
+        <>
+            <InfiniteScroll
+                dataLength={postData.length} //This is important field to render the next data
+                next={fetchMorePostData}
+                hasMore={hasMore}
+                loader={<h4 className="text-center ">Loading...</h4>}
+                endMessage={
+                    <p className="mt-4 ml-[10rem]" style={{ textAlign: 'center' }}>
+                    <b>No more post!</b>
+                    </p>
+                }>
+                {!isLoading ? <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={4}>
                             <Item>
@@ -38,39 +152,44 @@ export default function Home() {
                                     <div className="protop"></div>
                                     <div className="probottom relative">
                                         <hr />
-                                        <div className="id"><img className="absolute top-[-100%] left-[35%]" src="https://wallpapers.com/images/featured/professor-money-heist-1yegj3ptnd8g5noc.jpg" alt="profile" /></div>
-                                        <h1>Rahul_00</h1>
+                                        <Link to={`/seeuserprofile/${localUserId}`} className="id"><img className="absolute top-[-100%] left-[35%]" src={userData.avatar} alt="profile" /></Link>
+                                        <h1>{userData.name}</h1>
                                         <hr />
                                         <div className="btncen">
-                                            <Button variant="contained" size="large" sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                flexDirection: 'row'
-                                            }}>
-                                                <span style={{ marginRight: '15px', marginTop: '0px', }}><LogoutIcon /></span>
-                                                Log Out
-                                            </Button>
+                                            <Logout/>
                                         </div>
                                     </div>
                                 </div>
                             </Item>
                         </Grid>
                         <Grid item xs={12} md={8}>
-                            <Item>
+                            <Item className="welcome_container relative w-[80%]">
                                 <div className="proright">
                                     <div>
-                                        <Toppost />
+                                        <Toppost getUserData={getUserData} localUserId={localUserId} name={userData.name} profileImage={userData.avatar}/>
                                     </div>
                                 </div>
                             </Item>
-                            <Postcont />
-                            <Postcont />
-                            <Postcont />
-                            <Postcont />
-                            
+                            <div>
+                            </div>
+                            <div className="w-full flex flex-col ">
+                             {isPostResult && isUserResult && 
+                                postData && postData.length > 0 && postData.map((elm, index)=>{
+                                    return <Postcont key={index} getUserData={getUserData} localUserData={userData}  likedby={elm.likedby} localUserId={localUserId} _id={elm._id} posttitle={elm.posttitle} postimage={elm.postimage} postlike={elm.postlike} postcomment={elm.postcomment} author={elm.author}/>                                    
+
+                                })
+                            }   
+                             </div>                         
                         </Grid>
                     </Grid>
-                </Box>
+                </Box> :
+                    <div className="flex items-center justify-center h-[83vh] w-full ">
+                        <FadLoader color={'gray'}/>
+                    </div>
+                }                  
+                </InfiniteScroll> 
+                </>
     );
 }
+
+export {Postcont};

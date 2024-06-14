@@ -62,7 +62,6 @@ const SignUp = () => {
               body:JSON.stringify({name,email,password})
             })
             response = await response.json();
-            // console.log(response);
             if(response.status === true){
               nameRef.current.value = '';
               emailRef.current.value = '';

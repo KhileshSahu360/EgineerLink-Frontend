@@ -22,20 +22,37 @@ import { useSelector } from 'react-redux';
 import Loader from '../Loader/Loader';
 import Alerts from '../Alert/Alert';
 import { MdDelete } from "react-icons/md";
-
+import { Form, Link } from 'react-router-dom';
+import Toastify, { ErrorToastify } from '../Toastify/Toastify';
+import CreatePost  from '../Post/CreatePost';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { userDetailAction } from '../Store/Store';
+import axios from 'axios';
 
 
 const Profile = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState('Unknown.jpg');
   const [showSeeMoreButton,setShowSeeMoreButton] = useState(false);
   const aboutContentRef = useRef(null);
   const [about, setAbout] = useState('');
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+  const [heading, setHeading] = useState('');
   const [education, setEducation] = useState([{subTitle:'boys school',description:'higher secondary'},{subTitle:'polytechnic college',description:'higher secondary'}]); 
   const [experience, setExperience] = useState([{subTitle:'i have one month good experience in web development',description:'SEED IT SOLUTION'},{subTitle:'1 year experince in riverhouse technology',description:'RIVERHOUSE TECHNOLOGY'}]); 
   const [skill, setSkill] = useState([{subTitle:'MongoDB',description:'1 Month good'},{subTitle:'ExpressJS',description:'1 Month good'}]); 
+  const [isShowUpload, setIsShowUpload] = useState(false);
+  const [uploadedSuccessful,setUploadedSuccessful] = useState(false);
+  const [uploadingFailed,setUploadingFailed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [followers, setFollowers] = useState(0);
+  const [post, setPost] = useState([]);
   const userId = localStorage.getItem('v09userInfoId');
   useEffect(()=>{
-    // console.log(userId);
     if(userId){
       getUserData();
     }
@@ -43,7 +60,12 @@ const Profile = () => {
       setShowSeeMoreButton(aboutContentRef.current.scrollHeight !== aboutContentRef.current.clientHeight)
     }
   },[])
+  const falseToastify = () => {
+    setUploadedSuccessful(false);
+    setUploadingFailed(false);
+  }
   const getUserData = async() => {
+  try{
     const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${userId}`,{
       method : 'get',
       headers : {
@@ -52,12 +74,25 @@ const Profile = () => {
     })
     const response = await rawResponse.json();
     const { user } = response;
-    console.log(user);
-    const { name, about, email, experience:dbExperience, education:dbEducation, skill:dbSkill, followers} = user;
-    setEducation(dbEducation);
-    setExperience(dbExperience);
-    setSkill(dbSkill);
-    setAbout(about);
+    if(user){
+      const { name:dbName, _id, location:dbLocation, post:dbPost, about:dbAbout, heading:dbHeading, email, avatar, experience:dbExperience, education:dbEducation, skill:dbSkill, followers:dbFollowers} = user;
+    
+      setEducation(dbEducation);
+      setExperience(dbExperience);
+      setSkill(dbSkill);
+      setAbout(dbAbout);
+      setName(dbName);
+      setHeading(dbHeading);
+      setProfileImage(avatar);
+      setLocation(dbLocation);
+      setFollowers(dbFollowers);
+      setPost(dbPost);
+    }else{
+      navigate('/signin');
+    }
+  }catch(error){
+    navigate('/404error');
+  }
   }
   
   const seeMoreStyle = { 
@@ -66,32 +101,146 @@ const Profile = () => {
     overflow:'hidden',
     display:'-webkit-box'
   }
- 
+  
+  const postSeeMoreStyle = { 
+    WebkitLineClamp:3,
+    WebkitBoxOrient:'vertical',
+    overflow:'hidden',
+    maxWidth:'88%',
+    display:'-webkit-box'
+  }
+  
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+        setIsShowUpload(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById('fileInput').click();
+  };
+  const handleUpload = async() => {
+    const data = new FormData();
+    data.append("file",profileImage);
+    data.append("upload_preset","profile_images");
+    data.append("cloud_name","dgdnyeo0y");
+
+    try{
+      setIsLoading(true);
+      let response = await fetch("https://api.cloudinary.com/v1_1/dgdnyeo0y/image/upload",{
+        method:'post',
+        body:data
+      })
+      response = await response.json();
+      const { secure_url } = response;
+      if(secure_url){
+        const rawResult = await fetch(`http://localhost:3000/user/uploadprofileimg/${userId}`,{
+          method:'post',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({url:secure_url})
+        }) 
+        const result = await rawResult.json();
+        if(result.status===true){
+          setUploadedSuccessful(true);
+          setIsShowUpload(false);
+          setProfileImage(secure_url);
+          getUserData();
+        }else{
+          setUploadingFailed(true);
+        }
+        setIsLoading(false);
+      }
+    }catch(error){
+      setUploadingFailed(true);
+      setIsLoading(false);
+    }
+    
+  }
+  const deletePost = async(userId, postId) => {
+    try{
+      const response = await axios.delete(`http://localhost:3000/post/deletepost/${postId}/${userId}`);
+      getUserData();
+    }catch(error){
+      navigate('/servererror');
+    }
+
+  }
   return (
     <div className='h-full'>
       <div className='h-[auto] pb-3 bg-white rounded-lg'>
         <div className='h-36 relative rounded-sm bg-[#e6e6e6] flex place-items-center justify-center'>
           <img src={EngineerLinkLogo} className='h-9' alt="" />
-          <div className='p-1 bg-white absolute top-[30%] left-6 rounded-full'>
-            <img src={Avatar} className='h-36 Avatar' alt="" />
-          </div>
+          <form>
+            <div className='p-1 profile_div bg-white absolute max-h-34 max-w-36 min-w-34 min-w-36  top-[30%] left-6 rounded-full overflow-hidden'>
+                <img src={profileImage} className='Avatar cursor-pointer' alt="" onClick={triggerFileInput}/>
+                <input 
+                type="file" 
+                id="fileInput" 
+                style={{ display: 'none' }} 
+                onChange={handleImageChange} 
+                accept="image/*"
+              />
+            </div>
+          </form>
         </div>
+        {uploadedSuccessful && <Toastify deActivate={falseToastify} time={5000} msg={'Profile images uploaded!'}/>}
+        {uploadingFailed &&  <ErrorToastify deActivate={falseToastify} time={3000} msg={'Image uploading failed! Try Again'}/>}  
         <div className='mt-14 pl-7 '>
-          <div className='relative'><label htmlFor="" className='font-medium text-2xl'>Khilesh Sahu</label><label htmlFor="" className="absolute top-[-50%] right-6 hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><GoPencil fontSize={'1.4rem'}/></label></div>
-          <div className='max-w-[70%] subHeading'><label htmlFor="" className='opacity-70'>Mern Stack Web Developer|javascriptlsajkklfsjflksajflsakjfdlkj lksfjlk lksflksa lkjf </label></div>
-          <div><label htmlFor="" className='text-sm opacity-50'>Chattisgarh, Bhilai</label></div>
-          <div><label htmlFor="" className='text-sm text-[#2174c8] cursor-pointer'>612 followers</label></div>
+            {isShowUpload && <Button className="bg-mainColor mb-1 ml-6" onClick={handleUpload}>{isLoading?<Loader color={'white'}/>:'upload'}</Button>}
+          <div className='relative'><label htmlFor="" className='font-medium text-2xl'>{name}</label><label htmlFor="" className="absolute top-[-50%] right-6 hover:bg-[#ddd] transition-all p-3 cursor-pointer rounded-full"><DialogDemo getUserData={getUserData} userId={userId} name={name} heading={heading} location={location} title={'Basic Detail'}/></label></div>
+          <div className='max-w-[70%] subHeading'><label htmlFor="" className='opacity-70'>{heading}</label></div>
+          <div><label htmlFor="" className='text-sm opacity-50'>{location}</label></div>
+          <div><Link to="/mynetwork" className='text-sm text-[#2174c8] cursor-pointer'>{name} Network's</Link></div>
         </div>
       </div>
 
       <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
         <div className='flex justify-between px-6 py-2'>
           <label htmlFor="" className='font-medium text-xl'>Activity</label>
-          <label htmlFor="" className='px-2 rounded-2xl font-semibold cursor-pointer hover:text-white transition-all hover:bg-[#2174c8] py-1 border-[#2174c8] text-[#2174c8] border-2'>Create a post</label>
+          <label htmlFor="" className='px-2 rounded-2xl font-semibold cursor-pointer hover:text-white transition-all hover:bg-[#2174c8] py-1 border-[#2174c8] text-[#2174c8] border-2'><CreatePost getUserData={getUserData} title={'Create a post'} localUserId={userId} name={name} profileImage={profileImage}/></label>
         </div>
         <div className='pl-6'>
           <label htmlFor="" className='px-3 py-1 rounded-lg bg-green-700 text-white font-semibold'>Post</label>
         </div>
+
+        {/* post design */}
+        {
+          post && post.length > 0 ? 
+          post.map((elm)=>{
+            return <div className='relative'>
+              <Link key={elm.postId._id} to={`/seepost/${elm.postId._id}/${userId}`} className='pl-7 pt-10 items-center flex gap-3 relative'>
+               <label htmlFor="" className='absolute top-[14%] text-[.8rem] opacity-50'>{name} posted this</label>
+               <div className='post_img_div overflow-hidden min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'>
+                 <img src={elm.postId.postimage} alt="" className='rounded-lg min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'/>
+               </div>
+               <div className='relative max-w-[88%] min-w-[88%] min-h-[4rem] max-h-[5rem] overflow-hidden'>
+                 <label htmlFor="" className='text-justify opacity-60 ' style={postSeeMoreStyle}>
+                   {elm.postId.posttitle}
+                 </label>
+               </div>
+             </Link>
+                 <div className='absolute top-[40%] right-10'>
+                  <label htmlFor="" onClick={()=>deletePost(userId, elm.postId._id)} className='cursor-pointer'><MdDelete color='red' className='hover:scale-125 transition-all' fontSize={'1.2rem'}/></label>
+                 </div>
+              <div className='w-[96%] pl-6 mt-2'>
+                 <hr />
+              </div>
+         </div>
+          })
+          : 
+        <div className='flex justify-center '>
+          <label htmlFor="" className=' px-2 py-[1px]  rounded-sm'>No post yet!</label>
+        </div>
+        }
+        {/* end */}
       </div>
 
       <div className='h-[auto] mt-3 pb-3 bg-white rounded-lg'>
@@ -161,7 +310,6 @@ const Profile = () => {
 
 const ProfileSection = (props) => {
   const handleDelete = async(uniqueId, apiName, userId) => {
-    console.log(uniqueId, apiName, userId);
     const rawResponse = await fetch(`http://localhost:3000/user/delete${apiName}/${userId}/${uniqueId}`);
     const response = await rawResponse.json();
     if(response.status){
@@ -206,16 +354,34 @@ const ProfileSection = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDataSaved, setIsDataSaved] = useState(false);
   const[emptyAlert,setEmptyAlert] = useState(false);
+  const [name, setName] = useState('');
+  const [heading, setHeading] = useState('');
+  const [location, setLocation] = useState('');
+  // var nameRef = useRef();
+  // var headingRef = useRef();
+  // var locationRef = useRef();
+
+  function hasKeys(obj, keys) {
+    return keys.every(key => obj.hasOwnProperty(key));
+  }
+    useEffect(() => {
+      if (hasKeys(props, ['name', 'heading', 'location'])) {
+        setName(props.name);
+        setHeading(props.heading);
+        setLocation(props.location);
+      }
+    }, [props]);
+  
 
   const falseIsDataSaved = () => {
     setIsDataSaved(false);
   }
-  const submitHandler = async(firstValue, secondValue, isDoubleField, isDelete, apiName, userId) => {
+
+  const submitHandler = async(firstValue, secondValue, thirdValue, isDoubleField, isTripleField, isDelete, apiName, userId) => {
     // for the edit section
     if(!isDelete){
       if(isDoubleField){
         if(firstValue.current.value.length>0 && secondValue.current.value.length>0){
-          console.log(userId);
           setIsLoading(true);
           const rawResponse = await fetch(`http://localhost:3000/user/${apiName}/${userId}`,{
             method:'post',
@@ -226,7 +392,6 @@ const ProfileSection = (props) => {
           })
           const response = await rawResponse.json();
           setIsLoading(false);
-          console.log(response);
           if(response.status===true){
             setIsDataSaved(true);
             getUserData();
@@ -234,7 +399,27 @@ const ProfileSection = (props) => {
       }else{
         setEmptyAlert(true);
       }
-      }else if(!isDoubleField){
+      }else if(isTripleField){
+        if(firstValue.length>0 && secondValue.length>0 && thirdValue.length>0){
+          setIsLoading(true);
+          const rawResponse = await fetch(`http://localhost:3000/user/${apiName}/${userId}`,{
+            method:'post',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            body:JSON.stringify({firstValue:firstValue,secondValue:secondValue,thirdValue:thirdValue})
+          })
+          const response = await rawResponse.json();
+          setIsLoading(false);
+          if(response.status===true){
+            setIsDataSaved(true);
+            getUserData();
+          }
+      }else{
+        setEmptyAlert(true);
+      } 
+      }
+      else if(!isDoubleField){
         if(firstValue.current.value.length > 0){
           if(apiName==='about'){
             setIsLoading(true);
@@ -247,7 +432,6 @@ const ProfileSection = (props) => {
             })
             const response = await rawResponse.json();
             setIsLoading(false);
-            console.log(response);
             if(response.status===true){
               setIsDataSaved(true);
               getUserData();
@@ -263,7 +447,6 @@ const ProfileSection = (props) => {
             })
             const response = await rawResponse.json();
             setIsLoading(false);
-            console.log(response);
             if(response.status===true){
               setIsDataSaved(true);
               getUserData();
@@ -288,12 +471,12 @@ const ProfileSection = (props) => {
         <DialogHeader>
           <DialogTitle>{props.type==='plus'?props.title:"Edit " + props.title}</DialogTitle>
           <DialogDescription>
-            {props.type === 'plus'?'fill both of the field and click the save button.': "Make changes to your props.title here. Click save when you are done."}
+            {props.type === 'plus'?'fill both of the field and click the save button.': `Make changes to your ${props.title} here. Click save when you are done.`}
           </DialogDescription>
         </DialogHeader>
         {
           props.title === 'About' ?
-          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(aboutRef, null, false, false,'about',props.userId)}}>
+          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(aboutRef, null, null, false, false, false,'about',props.userId)}}>
                 {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
             <div>
               <textarea ref={aboutRef} name="" className='border focus:border-slate-500 focus:outline-none rounded-sm resize-none w-full p-2 text-[.9rem]'  cols={10} id="">{props.aboutContent}</textarea>
@@ -302,9 +485,52 @@ const ProfileSection = (props) => {
                       <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
           </DialogFooter>
           </form>
+          : props.title === 'Basic Detail' ? 
+          <>
+          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(name, heading, location, false, true , false,'setbasicdetail', props.userId)}}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(event)=>setName(event.target.value)}
+                className="col-span-3"
+                />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                SubHeading
+              </Label>
+              <Input
+                id="username"
+                value={heading}
+                onChange={(event)=>setHeading(event.target.value)}
+                className="col-span-3"
+                />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Location
+              </Label>
+              <Input
+                id="username"
+                value={location}
+                onChange={(event)=>setLocation(event.target.value)}
+                className="col-span-3"
+                />
+            </div>
+          </div>
+          <DialogFooter> 
+                      <SubmitButton type={props.type} isDataSaved={isDataSaved} isLoading={isLoading}/>
+          </DialogFooter>
+          </form>
+          </>
           : props.title === 'Educations' ? 
           <>
-          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(educationRefSchool, educationRefField, true, true)}}>
+          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(educationRefSchool, educationRefField, null, true, false, true)}}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -336,7 +562,7 @@ const ProfileSection = (props) => {
           </form>
           </>
           : props.title === 'Experience' ?
-          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(experienceRefCompany, experienceRefDescription, true, true)}}>
+          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(experienceRefCompany, experienceRefDescription, null, true, false, true)}}>
             <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
@@ -366,7 +592,7 @@ const ProfileSection = (props) => {
           </form>
           :
            props.title === 'Skills' ?
-          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(skillRef, null, false, true)}}>
+          <form onSubmit={(e)=>{e.preventDefault(); submitHandler(skillRef, null, null, false, false, true)}}>
             <div className="grid gap-4 py-4">
               <div className="flex items-center gap-6">
               <Label htmlFor="name" className="text-right">
@@ -389,7 +615,7 @@ const ProfileSection = (props) => {
         }
           {props.type === 'plus' ?
             props.title === 'Add Educations'?
-            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addEducationRefSchool, addEducationRefField, true, false, 'addeducation', props.userId)}}>
+            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addEducationRefSchool, addEducationRefField, null, true, false, false, 'addeducation', props.userId)}}>
                 <div className="grid gap-4 py-4">
                 {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -420,7 +646,7 @@ const ProfileSection = (props) => {
           </form>
             :
             props.title === 'Add Experience'?
-            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addExperienceRefCompany, addExperienceRefDescription, true, false, 'addexperience', props.userId)}}>
+            <form onSubmit={(e)=>{e.preventDefault(); submitHandler(addExperienceRefCompany, addExperienceRefDescription, null, true, false, false, 'addexperience', props.userId)}}>
                 {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -453,7 +679,7 @@ const ProfileSection = (props) => {
             :
             props.title === 'Add Skills'?
             <>
-              <form onSubmit={(e)=>{e.preventDefault();submitHandler(addSkillRef, null, false, false, 'addskill',props.userId)}}>
+              <form onSubmit={(e)=>{e.preventDefault();submitHandler(addSkillRef, null, null, false, false, false, 'addskill',props.userId)}}>
               {emptyAlert && <Alerts types={'error'} msg={'Please fill all the Field!'} status={setEmptyAlert}/>}
                           <div className="grid gap-4 py-4">
                           <div className="flex items-center gap-6">
@@ -486,7 +712,7 @@ const ProfileSection = (props) => {
 
 const SubmitButton = ({color, type, isLoading, isDataSaved}) => {
   return(
-    <Button type="submit" disabled={isDataSaved?true:false} className={color==='red'?"bg-[red]":"bg-mainColor"}>{isLoading?<Loader/>:color==='red'?'Delete':isDataSaved?'Saved':type==='plus'?'   Add   ':'Save changes'}</Button>
+    <Button type="submit" disabled={isDataSaved?true:false} className={color==='red'?"bg-[red]":"bg-mainColor"}>{isLoading?<Loader color={'white'}/>:color==='red'?'Delete':isDataSaved?'Saved':type==='plus'?'   Add   ':'Save changes'}</Button>
   )
 }
 export default Profile
