@@ -28,6 +28,7 @@ const MyNetwork = () => {
   const [allUserData, setAllUserData] = useState(null);
   const [localUserData, setLocalUserData] = useState(null);
   const [allUserDataForPeople, setAllUserDataForPeople] = useState(null);
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const fetchData = () => {
     setTimeout(()=>{
       const newItem = Array.from({length:20},(_,i)=>`Item ${item.length + i + 1}`);
@@ -52,7 +53,7 @@ const MyNetwork = () => {
   }
   const getUsers = async() => {
     try{
-      const response = await axios.get(`http://localhost:3000/user/getalluser/${localUserId}`)
+      const response = await axios.get(`${backend_url}user/getalluser/${localUserId}`)
       if(response.status === 200 && response.data.users ){
         setAllUserData(response.data.users);
         return response.data.users;
@@ -64,7 +65,7 @@ const MyNetwork = () => {
   }
   const getLocalUserData = async() => {
     try{
-      const response = await axios.get(`http://localhost:3000/user/getuserdata/${localUserId}`)
+      const response = await axios.get(`${backend_url}user/getuserdata/${localUserId}`)
       if(response.status === 200 && response.data.user){
         setLocalUserData(response.data.user);
         dispatch(userDetailAction.setDetail(response.data.user));
@@ -147,12 +148,13 @@ const MyNetwork = () => {
 };
 
 const FollowerDesign = (props) => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   useEffect(()=>{
   },[props])
   const unFollowHandler = async(localUserId, newUserId) => {
     try{
       
-        const response = await axios.put(`http://localhost:3000/user/removeuserfromfollower/${localUserId}/${newUserId}`);
+        const response = await axios.put(`${backend_url}user/removeuserfromfollower/${localUserId}/${newUserId}`);
         props.getData();
     }catch(error){
       navigate('/servererror')
@@ -191,6 +193,7 @@ const FollowerDesign = (props) => {
 
 const FollowingDesign = (props) => {
   const [isFollowed, setIsFollowed] = useState(true);
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   useEffect(()=>{
     const res = props.localUserData.following.some(obj => obj._id === props._id);
     // const res = props.localUserData.following.includes(props._id);
@@ -199,10 +202,10 @@ const FollowingDesign = (props) => {
   const followingHandler = async(localUserId, newUserId) => {
     try{
       if(isFollowed){
-        const response = await axios.put(`http://localhost:3000/user/unfollowuser/${localUserId}/${newUserId}`);
+        const response = await axios.put(`${backend_url}user/unfollowuser/${localUserId}/${newUserId}`);
         props.getData();
       }else{
-        const response = await axios.put(`http://localhost:3000/user/followuser/${localUserId}/${newUserId}`);
+        const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${newUserId}`);
         props.getData();
       }
     }catch(error){
@@ -239,6 +242,7 @@ const FollowingDesign = (props) => {
 
 const PeopleCardDesign = (props) => {
   const [isFollowed, setIsFollowed] = useState(null);
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   useEffect(()=>{
     // const res = props.localUserData.following.some(obj => obj._id === props._id);
     // const res = props.localUserData.following.includes(props._id);
@@ -247,10 +251,10 @@ const PeopleCardDesign = (props) => {
   const followHandler = async(localUserId, newUserId) => {
     try{
       if(isFollowed){
-        const response = await axios.put(`http://localhost:3000/user/unfollowuser/${localUserId}/${newUserId}`);
+        const response = await axios.put(`${backend_url}user/unfollowuser/${localUserId}/${newUserId}`);
         props.getData();
       }else{
-        const response = await axios.put(`http://localhost:3000/user/followuser/${localUserId}/${newUserId}`);
+        const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${newUserId}`);
         props.getData();
       }
     }catch(error){

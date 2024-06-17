@@ -21,6 +21,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [isPassShowed, setIsPassShowed] = useState(false);
   const navigate = useNavigate();
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     isLinkValid();
@@ -28,7 +29,7 @@ const ResetPassword = () => {
   const isLinkValid = async () => {
     try {
       let response = await fetch(
-        `http://localhost:3000/tokenauth/islinkvalid/${id}/${token}`,
+        `${backend_url}tokenauth/islinkvalid/${id}/${token}`,
         {
           method: "post",
           headers: {
@@ -54,7 +55,7 @@ const ResetPassword = () => {
           setLoading(true);
           try {
             let response = await fetch(
-              `http://localhost:3000/tokenauth/resetpassword`,
+              `${backend_url}tokenauth/resetpassword`,
               {
                 method: "post",
                 headers: {

@@ -15,6 +15,7 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+const backend_url = import.meta.env.VITE_BACKEND_URL;
 
 let actualToken;
 let tokenFromLocal = localStorage.getItem('token');
@@ -35,7 +36,7 @@ const cookies = cookieString.split('; ');
   }
   let isUserAuthentic;
   const isTokenValid = async() => {
-    const rawResponse = await fetch('http://localhost:3000/istokenvaid',{
+    const rawResponse = await fetch(`${backend_url}istokenvaid`,{
       method:'GET',
       headers:{
         'Content-Type' : 'application/json',

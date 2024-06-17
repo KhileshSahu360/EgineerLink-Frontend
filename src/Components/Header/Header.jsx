@@ -26,6 +26,7 @@ const Header = ({selectedTab}) => {
   const inputRef = useRef(null);
   const [userData, setUserData] = useState(null);
   var localUserId;
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
      localUserId = localStorage.getItem('v09userInfoId');
     if(localUserId){
@@ -42,7 +43,7 @@ const Header = ({selectedTab}) => {
 
   const getLocalUserData = async() => {
     try{
-      const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${localUserId}`);
+      const rawResponse = await fetch(`${backend_url}user/getuserdata/${localUserId}`);
       const response = await rawResponse.json();
       const { user } = response;
       if(user){

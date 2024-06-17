@@ -23,7 +23,7 @@ function Post(props) {
     const [fullDetail, setFullDetail] = useState({});
     const [isFollowed, setIsFollowed] = useState(false);
     const [isOwnPost, setIsOwnPost] = useState(false);
- 
+    const backend_url = import.meta.env.VITE_BACKEND_URL;
     const textRef = useRef(null); // Create a ref for the text input
 
     useEffect(()=>{
@@ -45,7 +45,7 @@ function Post(props) {
     const getSinglePost = async(_id) => {
         if(_id){
             try{
-                const rawResponse = await fetch(`http://localhost:3000/post/getsinglepost/${_id}`);
+                const rawResponse = await fetch(`${backend_url}post/getsinglepost/${_id}`);
                 const response = await rawResponse.json();
                 const { post } = response;
                 setFullDetail(post);
@@ -57,7 +57,7 @@ function Post(props) {
     const handleLikeButtonClick = async(_id, userId) => {
         if(!isLiked){
             try{
-                const response = await axios.put(`http://localhost:3000/post/incrementlike/${_id}/${userId}`)
+                const response = await axios.put(`${backend_url}post/incrementlike/${_id}/${userId}`)
                 if(response.status === 200 && response.data.status === true){
                     getSinglePost(_id);
                 }
@@ -66,7 +66,7 @@ function Post(props) {
             }
         }else{
             try{
-                const response = await axios.put(`http://localhost:3000/post/decrementlike/${_id}/${userId}`)
+                const response = await axios.put(`${backend_url}post/decrementlike/${_id}/${userId}`)
                 if(response.status === 200 && response.data.status === true){
                     getSinglePost(_id);
                 }
@@ -90,7 +90,7 @@ function Post(props) {
         }
         try{
             if(addCommentText.length > 0){
-                const response = await axios.post(`http://localhost:3000/post/addcomment/${_id}/${localUserId}`,data)
+                const response = await axios.post(`${backend_url}post/addcomment/${_id}/${localUserId}`,data)
                 if(response.status === 200 && response.data.status === true){
                     getSinglePost(_id);
                 }
@@ -104,10 +104,10 @@ function Post(props) {
     const handleFollow = async(localUserId, newUserId) => {
         try{
           if(isFollowed){
-            const response = await axios.put(`http://localhost:3000/user/unfollowuser/${localUserId}/${newUserId}`);
+            const response = await axios.put(`${backend_url}user/unfollowuser/${localUserId}/${newUserId}`);
             props.postData.getUserData();
         }else{
-            const response = await axios.put(`http://localhost:3000/user/followuser/${localUserId}/${newUserId}`);
+            const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${newUserId}`);
             props.postData.getUserData();
           }
         }catch(error){

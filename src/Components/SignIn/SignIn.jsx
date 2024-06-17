@@ -26,6 +26,9 @@ const SignIn = () => {
   const[emptyAlert,setEmptyAlert] = useState(false);
   const[incorrectAlert,setIncorrectAlert] = useState(false);
   const[isPassShowed,setIsPassShowed] = useState(false)
+
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+
   const falseToastify = () => {
     setTokenError(false);
     setIsSigninSuccess(false);
@@ -53,7 +56,7 @@ const SignIn = () => {
     if(email.length>0 && password.length>0){
         try{
           setLoading(true)
-          let response = await fetch('http://localhost:3000/signin',{
+          let response = await fetch(`${backend_url}signin`,{
             method:'post',
             headers:{
               'Content-Type': 'application/json'
@@ -95,7 +98,7 @@ const SignIn = () => {
     }
   }
   const googleClick = async() => {
-    const rawResponse = await fetch('http://localhost:3000/auth/google');
+    const rawResponse = await fetch(`${backend_url}auth/google`);
     const response = await rawResponse.json();
   }
   return (
@@ -135,7 +138,7 @@ const SignIn = () => {
   </form>
   <span>OR</span>
   <div className="relative w-[90%] flex justify-center">
-    <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href="http://localhost:3000/auth/google"><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
+    <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href={`${backend_url}auth/google`}><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
   </div>
 </div>
 

@@ -13,6 +13,8 @@ const SendMail = () => {
   const [success,setSuccess] = useState(false);
   const [exist,setExist] = useState(false);
   const [wrong,setWrong] = useState(false);
+
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const falseToastify = () => {
     setEmptyAlert(false);
     setSuccess(false);
@@ -23,7 +25,7 @@ const SendMail = () => {
     event.preventDefault();
     const email = emailRef.current.value;
     if(email.length > 0){
-      let response = await fetch('http://localhost:3000/tokenauth/sendmailforresetpass',{
+      let response = await fetch(`${backend_url}tokenauth/sendmailforresetpass`,{
         method:'post',
         headers:{
           'Content-Type':'application/json'

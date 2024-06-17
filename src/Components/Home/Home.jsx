@@ -52,6 +52,8 @@ export default function Home() {
     const [hasMore, setHasMore] = React.useState(true);
     const [excludeIds, setExcludeIds] = React.useState([]);
 
+    const backend_url = import.meta.env.VITE_BACKEND_URL;
+
     React.useEffect(() => {
         const checkLocalStorage = () => {
           const userId = localStorage.getItem('v09userInfoId');
@@ -77,7 +79,7 @@ export default function Home() {
   
     const getAllPost = async() => {
         try{
-        const response = await fetch(`http://localhost:3000/post/getallpost`,{
+        const response = await fetch(`${backend_url}post/getallpost`,{
             method : 'post',
             headers : {
                 'Content-Type' : 'application/json'
@@ -109,7 +111,7 @@ export default function Home() {
 
     const getUserData = async() => {
         try{
-          const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${localUserId}`,{
+          const rawResponse = await fetch(`${backend_url}user/getuserdata/${localUserId}`,{
             method : 'get',
             headers : {
               'Content-Type' : 'application/json'

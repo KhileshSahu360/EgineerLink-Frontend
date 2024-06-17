@@ -25,6 +25,7 @@ import { useParams } from "react-router-dom";
 
 
 const SeeUserProfile = () => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userIdToSee } = useParams();
@@ -58,7 +59,7 @@ const SeeUserProfile = () => {
 
   const getLocalUserData = async() => {
     try{
-      const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${localUserId}`,{
+      const rawResponse = await fetch(`${backend_url}user/getuserdata/${localUserId}`,{
         method : 'get',
         headers : {
           'Content-Type' : 'application/json'
@@ -85,7 +86,7 @@ const SeeUserProfile = () => {
   }
   const getUserData = async() => {
   try{
-    const rawResponse = await fetch(`http://localhost:3000/user/getuserprofiledata/${userIdToSee}/${localUserId}`);
+    const rawResponse = await fetch(`${backend_url}user/getuserprofiledata/${userIdToSee}/${localUserId}`);
     const response = await rawResponse.json();
     const { user } = response;
     if(user){
@@ -106,10 +107,10 @@ const SeeUserProfile = () => {
   const handleFollow = async(localUserId, userIdToSee) => {
     try{
       if(isFollowed){
-        const response = await axios.put(`http://localhost:3000/user/unfollowuser/${localUserId}/${userIdToSee}`);
+        const response = await axios.put(`${backend_url}user/unfollowuser/${localUserId}/${userIdToSee}`);
         getLocalUserData();
       }else{
-        const response = await axios.put(`http://localhost:3000/user/followuser/${localUserId}/${userIdToSee}`);
+        const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${userIdToSee}`);
         getLocalUserData();
       }
     }catch(error){

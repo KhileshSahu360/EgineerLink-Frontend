@@ -26,7 +26,7 @@ const SignUp = () => {
   const[emptyAlert,setEmptyAlert] = useState(false);
   const[notMatchAlert,setNotMatchAlert] = useState(false);
   const[passLengthAlert,setPassLengthAlert] = useState(false);
-
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const falseToastify = () => {
     setIsSignupSuccess(false);
     setUnsuccessSignup(false);
@@ -54,7 +54,7 @@ const SignUp = () => {
         if(password === confirmPassword){
           setLoading(true);
           try{
-            let response = await fetch('http://localhost:3000/signup',{
+            let response = await fetch(`${backend_url}signup`,{
               method:'post',
               headers:{                                                                       
                 'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ const SignUp = () => {
   </form>
   <span>OR</span>
   <div className="relative w-[90%] flex justify-center">
-    <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href="http://localhost:3000/auth/google"><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
+    <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href={`${backend_url}auth/google`}><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
   </div>
 </div>
 

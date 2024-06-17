@@ -10,6 +10,7 @@ const AccountActivation = () => {
   const [success, setSuccess] = useState(false);
   const [wrong, setWrong] = useState(false);
   const { id, token } = useParams();
+const backend_url = import.meta.env.VITE_BACKEND_URL;
   useEffect(()=>{
     if(id && token){
       isTokenAuth();
@@ -21,7 +22,7 @@ const AccountActivation = () => {
   },[id,token])
 
   const isTokenAuth = async () => {
-    let result =  await fetch(`http://localhost:3000/tokenauth/${id}/${token}`,{
+    let result =  await fetch(`${backend_url}tokenauth/${id}/${token}`,{
       method : 'post',
       headers:{
         'Content-Type' : 'application/json'

@@ -25,9 +25,9 @@ const Message = () => {
   const [filterChatList, setFilterChatList] = useState(null); 
   const [inputSearchText, setInputSearchText] = useState('');
   const [nouserFoundMsg, setNouserFoundMsg] = useState(false);
-
+  const backend_url = import.meta.env.VITE_BACKEND_URL_SOCKET;
   useEffect(()=>{
-     const socketConnection = io('http://localhost:3000',{
+     const socketConnection = io(`${backend_url}`,{
       auth:{
         localUserId : localUserData?._id
       }

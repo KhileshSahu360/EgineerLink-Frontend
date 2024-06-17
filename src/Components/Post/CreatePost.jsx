@@ -24,6 +24,7 @@ const CreatePost = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedSuccessful, setUploadedSuccessful] = useState(false);
   const [uploadingFailed, setUploadingFailed] = useState(false);
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const triggerFileInput = () => {
     document.getElementById('postfileInput').click();
   }
@@ -62,7 +63,7 @@ const CreatePost = (props) => {
           response = await response.json();
           const { secure_url } = response;
           if(secure_url){
-            const rawResult = await fetch(`http://localhost:3000/post/uploadpost/${localUserId}`,{
+            const rawResult = await fetch(`${backend_url}post/uploadpost/${localUserId}`,{
               method:'post',
               headers:{
                 'Content-Type':'application/json'

@@ -19,14 +19,15 @@ const SeePost = () => {
   const navigate = useNavigate();
   const { postId } = useParams();
   const { localUserId } = useParams();
-  
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
+
   useEffect(()=>{
     setIsResult(false);
     getPost();
   },[])
   const getPost = async() => {
     try{
-    const rawResult = await fetch(`http://localhost:3000/post/getpost/${postId}/${localUserId}`);
+    const rawResult = await fetch(`${backend_url}post/getpost/${postId}/${localUserId}`);
     const result = await rawResult.json();
     if(!result.error){
       setIsResult(true);

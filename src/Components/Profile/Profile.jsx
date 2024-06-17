@@ -32,6 +32,7 @@ import axios from 'axios';
 
 
 const Profile = () => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +67,7 @@ const Profile = () => {
   }
   const getUserData = async() => {
   try{
-    const rawResponse = await fetch(`http://localhost:3000/user/getuserdata/${userId}`,{
+    const rawResponse = await fetch(`${backend_url}user/getuserdata/${userId}`,{
       method : 'get',
       headers : {
         'Content-Type' : 'application/json'
@@ -140,7 +141,7 @@ const Profile = () => {
       response = await response.json();
       const { secure_url } = response;
       if(secure_url){
-        const rawResult = await fetch(`http://localhost:3000/user/uploadprofileimg/${userId}`,{
+        const rawResult = await fetch(`${backend_url}user/uploadprofileimg/${userId}`,{
           method:'post',
           headers:{
             'Content-Type':'application/json'
@@ -166,7 +167,7 @@ const Profile = () => {
   }
   const deletePost = async(userId, postId) => {
     try{
-      const response = await axios.delete(`http://localhost:3000/post/deletepost/${postId}/${userId}`);
+      const response = await axios.delete(`${backend_url}post/deletepost/${postId}/${userId}`);
       getUserData();
     }catch(error){
       navigate('/servererror');
@@ -309,8 +310,9 @@ const Profile = () => {
 }
 
 const ProfileSection = (props) => {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const handleDelete = async(uniqueId, apiName, userId) => {
-    const rawResponse = await fetch(`http://localhost:3000/user/delete${apiName}/${userId}/${uniqueId}`);
+    const rawResponse = await fetch(`${backend_url}user/delete${apiName}/${userId}/${uniqueId}`);
     const response = await rawResponse.json();
     if(response.status){
       props.getUserData();
@@ -339,6 +341,7 @@ const ProfileSection = (props) => {
 }
 
  function DialogDemo(props) {
+  const backend_url = import.meta.env.VITE_BACKEND_URL;
   const { getUserData } = props;
   const aboutRef = useRef();
   const educationRefSchool = useRef();
@@ -383,7 +386,7 @@ const ProfileSection = (props) => {
       if(isDoubleField){
         if(firstValue.current.value.length>0 && secondValue.current.value.length>0){
           setIsLoading(true);
-          const rawResponse = await fetch(`http://localhost:3000/user/${apiName}/${userId}`,{
+          const rawResponse = await fetch(`${backend_url}user/${apiName}/${userId}`,{
             method:'post',
             headers:{
               'Content-Type':'application/json'
@@ -402,7 +405,7 @@ const ProfileSection = (props) => {
       }else if(isTripleField){
         if(firstValue.length>0 && secondValue.length>0 && thirdValue.length>0){
           setIsLoading(true);
-          const rawResponse = await fetch(`http://localhost:3000/user/${apiName}/${userId}`,{
+          const rawResponse = await fetch(`${backend_url}user/${apiName}/${userId}`,{
             method:'post',
             headers:{
               'Content-Type':'application/json'
@@ -423,7 +426,7 @@ const ProfileSection = (props) => {
         if(firstValue.current.value.length > 0){
           if(apiName==='about'){
             setIsLoading(true);
-            const rawResponse = await fetch(`http://localhost:3000/user/setabout/${userId}`,{
+            const rawResponse = await fetch(`${backend_url}user/setabout/${userId}`,{
               method:'post',
               headers:{
                 'Content-Type':'application/json'
@@ -438,7 +441,7 @@ const ProfileSection = (props) => {
             }
           }else if(apiName==='addskill'){
             setIsLoading(true);
-            const rawResponse = await fetch(`http://localhost:3000/user/addskill/${userId}`,{
+            const rawResponse = await fetch(`${backend_url}user/addskill/${userId}`,{
               method:'post',
               headers:{
                 'Content-Type':'application/json'
