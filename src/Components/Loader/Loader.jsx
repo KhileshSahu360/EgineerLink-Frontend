@@ -2,6 +2,7 @@ import { useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import MoonLoader from "react-spinners/MoonLoader";
 import HashLoader from "react-spinners/HashLoader";
+import BarLoaders from "react-spinners/BarLoader";
 import './Loader.css';
 
 function Loader({color}) {
@@ -50,5 +51,20 @@ const FadLoader = ({color, size}) => {
     </div>
   )
 }
-export { CircleLoader, FadLoader };
+const BarLoader = ({color, size}) => {
+  const [loading, setLoading] = useState(true);
+  return(
+    <div className="sweet-loading">
+
+      <BarLoaders
+        color={color}
+        loading={loading}
+        size={size}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </div>
+  )
+}
+export { CircleLoader, FadLoader, BarLoader };
 export default Loader;

@@ -136,10 +136,10 @@ const SignIn = () => {
     {tokenError &&  <ErrorToastify time={3000} deActivate={falseToastify} msg={'Please try After some times!'}/>}
     {verifyError &&  <Toastify time={5000} deActivate={falseToastify} msg={'Verify your Email! Sent to your email'}/>}
   </form>
-  <span>OR</span>
+  {/* <span>OR</span>
   <div className="relative w-[90%] flex justify-center">
     <button className='w-[90%] border-2 border-black mt-4 p-2 pl-5 rounded-lg text-black font-medium' ><a href={`${backend_url}auth/google`}><img src={googleLogo} alt="google" className="h-[1rem] absolute top-[50.5%] left-[23%]"/> Login with Google</a></button>
-  </div>
+  </div> */}
 </div>
 
   )
