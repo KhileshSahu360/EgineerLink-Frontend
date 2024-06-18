@@ -66,6 +66,8 @@ const SignIn = () => {
           response = await response.json();
           if(response.status === true){
             localStorage.setItem('token',response.token);
+            localStorage.setItem('v09userInfoId',response.user._id);
+            localStorage.setItem('v09userInfoName',response.user.name);
             setIsSigninSuccess(true);
             setTimeout(()=>{
               navigate('/profile');
