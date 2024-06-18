@@ -177,7 +177,7 @@ const ChatList = ({AllDetails, selectedUser, localUserId}) => {
                     : name
                 }
           </label>
-          {message.message !== undefined ?<label
+          {message?.message !== undefined ?<label
             htmlFor=""
             className="text-[.8rem] tracking-wide flex items-center gap-1"
           >

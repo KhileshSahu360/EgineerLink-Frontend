@@ -41,7 +41,7 @@ const cookies = cookieString.split('; ');
   let isUserAuthentic;
   const isTokenValid = async() => {
     setLoading(true);
-    const rawResponse = await fetch(`${backend_url}istokenvaid`,{
+    const rawResponse = await fetch(`${backend_url}istokenvalid`,{
       method:'GET',
       headers:{
         'Content-Type' : 'application/json',
@@ -71,9 +71,14 @@ const cookies = cookieString.split('; ');
     setResult(true);
     setLoading(false);
   }
-  console.log(import.meta.env.VITE_HII)
   useEffect(()=>{
-    isTokenValid();
+    if(actualToken){
+      isTokenValid();
+    }else{
+      setResult(true);
+      setLoading(false);
+      navigate('/signin');
+    }
   },[])
   return (
     <>
