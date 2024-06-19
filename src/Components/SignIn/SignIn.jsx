@@ -12,6 +12,7 @@ import Loader from '../Loader/Loader';
 import googleLogo from '../../assets/logo/googleLogo.png';
 
 const SignIn = () => {
+  document.title = "Sign-In"
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);
   const [tokenError,setTokenError] = useState(false);

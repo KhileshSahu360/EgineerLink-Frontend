@@ -23,6 +23,7 @@ import NotFound from './Components/NotFound.jsx';
 import SeeUserProfile from './Components/Profile/SeeUserProfile.jsx';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import EditorPage from './Components/CollabCoding/EditorPage.jsx';
 
 let persistor = persistStore(store);
 
@@ -31,7 +32,7 @@ const router = createBrowserRouter(
     {path : '/accountactivation/:id/:token',element : <AccountActivation/>},
     {path : '/resetpassword/:id/:token',element : <ResetPassword/>},
     {path : '/', element : <App/>,
-    children:[
+      children:[
       {path : '/signin',element : <SignIn/>},
       {path : '/signup',element : <SignUp/>},
       {path : '/signin/sendmail',element : <SendMail/>},
@@ -42,9 +43,10 @@ const router = createBrowserRouter(
           {path : '/seepost/:postId/:localUserId', element:<SeePost/>},
           {path : '/mynetwork', element:<MyNetwork/>},
           {path : '/seeuserprofile/:userIdToSee', element:<SeeUserProfile/>},
-          {path : '/collabcoding', element:<CollabCoding/>},
           {path : '/notifications', element:<Notifications/>},
           {path : '/message', element:<Message/>},
+          {path : '/collabcoding', element:<CollabCoding/>},
+          {path : '/editor/:roomId', element:<EditorPage/>},
           {path : '/profile', element:<Profile/>},
           {path : '/404error', element:<NotFound/>},
           {path : '/servererror',element : <ServerError/>},
@@ -57,7 +59,7 @@ const router = createBrowserRouter(
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <RouterProvider router={router}>
@@ -65,5 +67,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </RouterProvider>
         </PersistGate>
       </Provider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )

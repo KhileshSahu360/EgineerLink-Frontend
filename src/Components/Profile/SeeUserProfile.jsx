@@ -90,6 +90,7 @@ const SeeUserProfile = () => {
     const response = await rawResponse.json();
     const { user } = response;
     if(user){
+      document.title = user.name;
       const { post:dbPost, followers:dbFollowers, following:dbFollowing } = user;
       setProfileImage(user.avatar);
       setFullUserData(user);

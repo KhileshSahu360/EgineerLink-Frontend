@@ -43,7 +43,15 @@
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.8",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "codemirror": "^5.65.2",
+    "express": "^4.17.3",
+    "react-avatar": "^4.0.0",
+    "react-hot-toast": "^2.2.0",
+    "react-scripts": "5.0.0",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2",
+    "web-vitals": "^2.1.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -13,6 +13,7 @@ import googleLogo from '../../assets/logo/googleLogo.png';
 
 
 const SignUp = () => {
+  document.title = "Sign-Up"
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);
   const [isSignupSuccess,setIsSignupSuccess] = useState(false);

@@ -19,6 +19,7 @@ import MailIcon from '@mui/icons-material/Mail';
 
 const Message = () => {
   const dispatch = useDispatch();
+  document.title = "Chat-App"
   const [localUserData, setLocalUserData] = useState();
   const { user, selectedUser } = useSelector(store => store.userDetailSlice)
   const [userChatList, setUserChatList] = useState(null); 

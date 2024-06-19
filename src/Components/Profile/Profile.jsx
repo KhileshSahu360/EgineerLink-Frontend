@@ -32,6 +32,7 @@ import axios from 'axios';
 
 
 const Profile = () => {
+  document.title = "My-Profile"
   const backend_url = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();

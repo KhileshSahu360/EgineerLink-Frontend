@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { userDetailAction } from "../Store/Store";
 
 const MyNetwork = () => {
+  document.title = "My-Network"
   const dispatch = useDispatch();
   const localUserId = localStorage.getItem('v09userInfoId');
   const navigate = useNavigate();

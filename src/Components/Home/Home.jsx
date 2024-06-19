@@ -55,6 +55,7 @@ export default function Home() {
     const backend_url = import.meta.env.VITE_BACKEND_URL;
 
     React.useEffect(() => {
+        document.title = "Home";
         const checkLocalStorage = () => {
           const userId = localStorage.getItem('v09userInfoId');
           if (userId) {
