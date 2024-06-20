@@ -1,0 +1,41 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  margin-left: 10px;
+  margin-top: 20px;
+}
+
+
+.img {
+  border: 1px solid black;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-size: cover;
+  background-position: center;
+}
+
+.info{
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+width: 73%;
+}
+
+.post{
+    border: 1px solid black;
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+}

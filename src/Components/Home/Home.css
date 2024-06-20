@@ -50,4 +50,7 @@
     .item_post{
         width: 100% !important;
     }
+    .no_post{
+        margin-left: 0 !important;
+    }
 }

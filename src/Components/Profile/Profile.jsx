@@ -44,9 +44,9 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [heading, setHeading] = useState('');
-  const [education, setEducation] = useState([{subTitle:'boys school',description:'higher secondary'},{subTitle:'polytechnic college',description:'higher secondary'}]); 
-  const [experience, setExperience] = useState([{subTitle:'i have one month good experience in web development',description:'SEED IT SOLUTION'},{subTitle:'1 year experince in riverhouse technology',description:'RIVERHOUSE TECHNOLOGY'}]); 
-  const [skill, setSkill] = useState([{subTitle:'MongoDB',description:'1 Month good'},{subTitle:'ExpressJS',description:'1 Month good'}]); 
+  const [education, setEducation] = useState([]); 
+  const [experience, setExperience] = useState([]); 
+  const [skill, setSkill] = useState([]); 
   const [isShowUpload, setIsShowUpload] = useState(false);
   const [uploadedSuccessful,setUploadedSuccessful] = useState(false);
   const [uploadingFailed,setUploadingFailed] = useState(false);
@@ -215,7 +215,7 @@ const Profile = () => {
 
         {/* post design */}
         {
-          post && post.length > 0 ? 
+          post && post?.length > 0 ? 
           post.map((elm)=>{
             return <div className='relative'>
               <Link key={elm.postId._id} to={`/seepost/${elm.postId._id}/${userId}`} className='pl-7 pt-10 items-center flex gap-3 relative'>
@@ -263,7 +263,7 @@ const Profile = () => {
             </div>
           </div>
           {
-            education.length > 0 ? education.map((elm, index)=>{
+            education?.length > 0 ? education.map((elm, index)=>{
               return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'education'} uniqueId={elm._id} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={elm.school} description={elm.field}/>
             }):
             <div className='flex justify-center '>
@@ -279,7 +279,7 @@ const Profile = () => {
             </div>
           </div>
           {
-            experience.length > 0 ? experience.map((elm, index)=>{
+            experience?.length > 0 ? experience.map((elm, index)=>{
               return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'experience'} uniqueId={elm._id} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={elm.company} description={elm.description}/>
             }):
             <div className='flex justify-center '>
@@ -295,7 +295,7 @@ const Profile = () => {
             </div>
           </div>
           {
-            skill.length > 0 ? skill.map((elm, index)=>{
+            skill?.length > 0 ? skill.map((elm, index)=>{
               return <ProfileSection key={index} userId={userId} getUserData={getUserData} title={'Skill'} uniqueId={elm._id} subTitle={elm.skillname} description={elm.description}/>
             }):
             <div className='flex justify-center '>

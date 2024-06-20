@@ -143,7 +143,7 @@ export default function Home() {
                 hasMore={hasMore}
                 loader={<h4 className="text-center ">Loading...</h4>}
                 endMessage={
-                    <p className="mt-4 ml-[10rem]" style={{ textAlign: 'center' }}>
+                    <p className="no_post mt-4 ml-[10rem]" style={{ textAlign: 'center' }}>
                     <b>No more post!</b>
                     </p>
                 }>

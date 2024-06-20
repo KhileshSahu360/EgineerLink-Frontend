@@ -78,16 +78,6 @@ const MyNetwork = () => {
     }
   }
   return (
-    <InfiniteScroll
-  dataLength={item.length} //This is important field to render the next data
-  next={fetchData}
-  hasMore={hasMore}
-  loader={<h4>Loading...</h4>}
-  endMessage={
-    <p style={{ textAlign: 'center' }}>
-      <b>Yay! You have seen it all</b>
-    </p>
-  }>
     <Tabs
       defaultValue="followers"
       className="w-full flex flex-col place-items-center"
@@ -144,7 +134,6 @@ const MyNetwork = () => {
         </Card>
       </TabsContent>
     </Tabs>
-    </InfiniteScroll>
   );
 };
 

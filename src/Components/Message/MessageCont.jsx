@@ -8,6 +8,21 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { userDetailAction } from '../Store/Store.jsx'
 import axios from 'axios';
+import { IoVideocam } from "react-icons/io5";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
+import { Button } from "../ui/button"
+import { v4 as uuidV4 } from 'uuid';
+import { useNavigate } from 'react-router-dom'
 
 
 const MessageCont = ({selectedUser, localUser}) => {
@@ -55,10 +70,13 @@ const MessageCont = ({selectedUser, localUser}) => {
             </label>
             {
               isUserOnline ?
-              <label className="text-sm text-green-600 tracking-wide font-medium -mt-1">online</label>
+              <label className="text-sm status text-green-600 tracking-wide font-medium -mt-1">online</label>
               :
-              <label className="text-sm  -mt-1 tracking-wide">offline</label>
+              <label className="text-sm status  -mt-1 tracking-wide">offline</label>
             }
+          </div>
+          <div className="ml-auto pr-10">
+            <VideoCallDialog/>
           </div>
         </header>
 
@@ -95,5 +113,68 @@ const MessageCont = ({selectedUser, localUser}) => {
     </>
   );
 };
+
+const VideoCallDialog = () => {
+  const [roomId, setRoomId] = useState('');
+  const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+
+  const createNewRoom = () => {
+    const id = uuidV4();
+    setRoomId(id);
+  };
+  const joinRoom = () => {  
+    navigate(`/videocallroom/${roomId}`,{
+      state : {
+        username
+      }
+    })
+  }
+
+  return (
+  <Dialog className="dialog">
+  <DialogTrigger asChild>
+    <label htmlFor="" className="cursor-pointer"><IoVideocam fontSize={'1.5rem'}/></label>
+  </DialogTrigger>
+  <DialogContent className="dialog_content sm:max-w-[425] pb-0">
+    <DialogHeader>
+      <DialogTitle className="flex gap-2 items-center">
+        <h1>Join the room</h1>
+      </DialogTitle>
+    </DialogHeader>
+      <div className="grid gap-4 py-4">
+        <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                RoomId
+              </Label>
+              <Input
+                id="name"
+                value={roomId}
+                onChange={(event)=>setRoomId(event.target.value)}
+                className="col-span-3"
+                />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Username
+              </Label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(event)=>setUsername(event.target.value)}
+                className="col-span-3"
+                />
+            </div>
+          </div>
+    <DialogFooter className="p-2 ">
+      <label htmlFor="" className="underline cursor-pointer text-green-400" onClick={createNewRoom}>New Room</label>
+      <Button className="bg-mainColor hover:bg-[#2174c8]"  onClick={joinRoom}>Join</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+  );
+}
+
+
 
 export default MessageCont;

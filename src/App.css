@@ -139,7 +139,8 @@ footer a:hover {
 .leaveBtn {
   width: 100%;
   margin-top: 20px;
-  background-color: rgb(91, 250, 91) !important;
+  /* background-color: rgb(91, 250, 91) !important; */
+  background-color: #4aed88 !important;
 }
 .CodeMirror {
   min-height: calc(100vh - 85px);

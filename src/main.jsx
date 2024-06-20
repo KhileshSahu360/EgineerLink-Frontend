@@ -24,6 +24,7 @@ import SeeUserProfile from './Components/Profile/SeeUserProfile.jsx';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import EditorPage from './Components/CollabCoding/EditorPage.jsx';
+// import VideoCallRoom from './Components/Message/VideoCallRoom.jsx';
 
 let persistor = persistStore(store);
 
@@ -45,6 +46,7 @@ const router = createBrowserRouter(
           {path : '/seeuserprofile/:userIdToSee', element:<SeeUserProfile/>},
           {path : '/notifications', element:<Notifications/>},
           {path : '/message', element:<Message/>},
+          // {path : '/videocallroom/:roomId', element:<VideoCallRoom/>},
           {path : '/collabcoding', element:<CollabCoding/>},
           {path : '/editor/:roomId', element:<EditorPage/>},
           {path : '/profile', element:<Profile/>},

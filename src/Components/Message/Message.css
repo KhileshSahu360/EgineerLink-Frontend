@@ -30,5 +30,8 @@
   .search_icon_of_chat{
     left: 5% !important;
   }
+  .status{
+    font-size: .68rem !important;
+  }
   
 }

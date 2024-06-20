@@ -269,7 +269,7 @@ const Header = ({selectedTab}) => {
                   fontSize={"1.2rem"}
                 />
               </Button>
-              <MobileNav openMenu={openMenu} handleClose={handleClose} open={open} anchorEl={anchorEl}/>
+              <MobileNav Avatar={userData?.avatar} openMenu={openMenu} handleClose={handleClose} open={open} anchorEl={anchorEl}/>
             </div>
           </div>
         )}
@@ -301,7 +301,7 @@ const MobileNav = (props) => {
           <Link to='/message' className="mo_menu_link"><AiFillMessage/> Message</Link>
         </MenuItem>
         <MenuItem onClick={props.handleClose}>
-          <Link to='/profile' className="mo_menu_link"><img src={Avatar} alt="profileImage" className="size-5"/>Me</Link>
+          <Link to='/profile' className="mo_menu_link"><img src={props.Avatar} alt="" className="size-5 rounded-full"/>Me</Link>
         </MenuItem>
       </Menu>
     </div>

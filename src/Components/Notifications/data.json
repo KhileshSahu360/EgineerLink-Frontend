@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "rahul",
+        "comment": "jai shree lord ram and jai shree lord hanuman",
+        "image":"https://i.pinimg.com/564x/05/8e/c0/058ec0109167807d50f22ce69533a792.jpg"
+    },
+    {
+        "id": 2,
+        "name": "Sonu",
+        "like": "liked your reel",
+        "image":"https://i.pinimg.com/564x/9d/5f/69/9d5f694dd71f71dae11ffb95981742cc.jpg"
+    },
+    {
+        "id": 3,
+        "name": "Nagu",
+        "comment": "Government Polytechnic khairagarh eak khotha ha",
+        "image":"https://i.pinimg.com/564x/d6/eb/6a/d6eb6a9f285a306c0c5451eb0af84532.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Money Hiest",
+        "like": "liked your reel",
+        "image":"https://i.pinimg.com/564x/d4/2c/96/d42c96aee91db347aafb113de5753a29.jpg"
+    }
+]

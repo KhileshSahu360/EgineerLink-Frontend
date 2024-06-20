@@ -111,8 +111,8 @@
 /* responsive */
 @media screen and (max-width:600px) {
     .dialog_content{
-      min-width:95% !important; 
-      max-width: 95% !important;
+      min-width:100% !important; 
+      max-width: 100% !important;
     }
   }
 @media screen and (max-width:800px) {

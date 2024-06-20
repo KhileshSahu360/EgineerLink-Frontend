@@ -194,7 +194,7 @@ const SeeUserProfile = () => {
           })
           : 
         <div className='flex justify-center '>
-          <label htmlFor="" className=' px-2 py-[1px]  rounded-sm'>No post yet!</label>
+          <label htmlFor="" className=' px-2 py-[1px]  rounded-sm'>No post!</label>
         </div>
         }
         {/* end */}
@@ -218,7 +218,7 @@ const SeeUserProfile = () => {
               return <ProfileSection key={index} localUserId={localUserId} getUserData={getUserData} title={'education'} uniqueId={elm._id} icon={<LuSchool fontSize={'2.4rem'}/>} subTitle={elm.school} description={elm.field}/>
             }):
             <div className='flex justify-center '>
-              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Education Added! Please Add</label>
+              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Education!</label>
             </div>
           }
       </div>
@@ -231,7 +231,7 @@ const SeeUserProfile = () => {
               return <ProfileSection key={index} localUserId={localUserId} getUserData={getUserData} title={'experience'} uniqueId={elm._id} icon={<GiSkills fontSize={'2.4rem'}/>} subTitle={elm.company} description={elm.description}/>
             }):
             <div className='flex justify-center '>
-              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Experience Added! Please Add</label>
+              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Experience!</label>
             </div>
           }
       </div>
@@ -244,7 +244,7 @@ const SeeUserProfile = () => {
               return <ProfileSection key={index} localUserId={localUserId} getUserData={getUserData} title={'Skill'} uniqueId={elm._id} subTitle={elm.skillname} description={elm.description}/>
             }):
             <div className='flex justify-center '>
-              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Skill Added! Please Add</label>
+              <label htmlFor="" className='bg-[#ddd] px-2 py-[1px]  rounded-sm'>No Skill!</label>
             </div>
           }
       </div>
