@@ -243,9 +243,9 @@ const Header = ({selectedTab}) => {
               className="menu_item removed_menu"
             >
               {userData ? 
-                    <img src={userData.avatar} alt="" className="h-5 rounded-full" />
+                    <img src={userData.avatar} alt="" className="size-5 rounded-full" />
                     :
-                    <img src={UnknownAvatar} alt="" className="h-5 rounded-full"/>
+                    <img src={UnknownAvatar} alt="" className="size-5 rounded-full"/>
                       }
               <span
                 style={{

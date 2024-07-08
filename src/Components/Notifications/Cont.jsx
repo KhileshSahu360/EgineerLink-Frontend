@@ -18,7 +18,7 @@ function Cont({ data }) {
         <div style={{ margin: '5px 0px', border: '1px solid black', width: '95%' }} />
       </div>
 
-      <div className="post" style={{ backgroundImage: `url(${data.image})` }}>
+      <div className="notify_post" style={{ backgroundImage: `url(${data.image})` }}>
       </div>
     </div>
   );

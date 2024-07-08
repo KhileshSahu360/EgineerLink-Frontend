@@ -11,7 +11,7 @@ const userDetailSlice = createSlice({
   initialState : {
     user : null,
     selectedUser : null,
-    onlineUsers : null
+    onlineUsers : null,
   },
   reducers:{
     setDetail : (state,action)=>{

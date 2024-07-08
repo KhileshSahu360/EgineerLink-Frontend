@@ -21,7 +21,7 @@ const ShowMessage = ({selectedUser, localUser}) => {
       })
     }
     setLoading(false);
-    },[])
+    },[selectedUser])
     
     useEffect(() => {
       // Scroll to the latest message

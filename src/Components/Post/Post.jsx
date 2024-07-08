@@ -57,7 +57,7 @@ function Post(props) {
     const handleLikeButtonClick = async(_id, userId) => {
         if(!isLiked){
             try{
-                const response = await axios.put(`${backend_url}post/incrementlike/${_id}/${userId}`)
+                const response = await axios.put(`http://localhost:3000/post/incrementlike/${_id}/${userId}`)
                 if(response.status === 200 && response.data.status === true){
                     getSinglePost(_id);
                 }

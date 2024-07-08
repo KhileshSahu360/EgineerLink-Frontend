@@ -20,12 +20,14 @@ import MailIcon from '@mui/icons-material/Mail';
 const Message = () => {
   const dispatch = useDispatch();
   document.title = "Chat-App"
+  const [message, setMessage] = useState([]);
   const [localUserData, setLocalUserData] = useState();
   const { user, selectedUser } = useSelector(store => store.userDetailSlice)
   const [userChatList, setUserChatList] = useState(null); 
   const [filterChatList, setFilterChatList] = useState(null); 
   const [inputSearchText, setInputSearchText] = useState('');
   const [nouserFoundMsg, setNouserFoundMsg] = useState(false);
+  const [lastMessage, setLastMessage] = useState([]);
   const backend_url = import.meta.env.VITE_BACKEND_URL_SOCKET;
   useEffect(()=>{
      const socketConnection = io(`${backend_url}`,{
@@ -41,6 +43,33 @@ const Message = () => {
     setUserChatList(newUserChatList);
     setFilterChatList(newUserChatList);
 
+
+    var filteredLastMsg = [];
+    console.log(newUserChatList)
+    newUserChatList.map((elm)=>{
+      socketConnection.emit('get_message', { selectedUser: elm?._id, localUser: localUserData?._id });
+      
+      const handleMessage = (data) => {
+        console.log('run')
+        const messages = data.messages.messageId;
+        const unseenCount = messages.filter(message => !message.seen && localUserData?._id !== message.senderId._id).length;
+        const lastMsg = messages[messages.length - 1];
+        let user;
+        if(localUserData?._id){
+          if(lastMsg.senderId._id==localUserData._id){
+            user = lastMsg.receiverId._id;
+          }else{
+            user = lastMsg.senderId._id;
+          }
+        }
+        const newMsg = {...lastMsg, user};
+        filteredLastMsg = [...filteredLastMsg, newMsg]
+        // console.log(filteredLastMsg)
+        setLastMessage(filteredLastMsg);
+      };
+      socketConnection.on('messages_are', handleMessage);
+    })
+    
     dispatch(socketAction.setSocket(socketConnection));
     
     socketConnection.on('online_users',(data)=>{
@@ -49,6 +78,7 @@ const Message = () => {
 
       return ()=>{
       dispatch(userDetailAction.setSelectedUser({}));
+      // socketConnection.off('messages_are', handleMessage);
       socketConnection.disconnect();
     }
   },[localUserData])
@@ -101,8 +131,8 @@ const Message = () => {
 
         <div >
             {
-              filterChatList?.length > 0 ? filterChatList.map((elm,index)=>{
-                return  <ChatList key={elm._id} localUserId={localUserData._id}  AllDetails={elm} selectedUser={selectedUser}/>
+              lastMessage?.length > filterChatList?.length * 2 && filterChatList?.length > 0 ? filterChatList.map((elm,index)=>{
+                return  <ChatList key={elm._id} localUserId={localUserData._id} lastMessage={lastMessage}  AllDetails={elm} selectedUser={selectedUser}/>
                 
               })
               : !nouserFoundMsg ? <div className="flex flex-col items-center">
@@ -125,40 +155,39 @@ const Message = () => {
   );
 };
 
-const ChatList = ({AllDetails, selectedUser, localUserId}) => {
+const ChatList = ({AllDetails, selectedUser, localUserId, lastMessage}) => {
   const dispatch = useDispatch();
-  const [message, setMessage] = useState("");
   const [name, setName] = useState(AllDetails.name);
   const [unseen, setUnseen] = useState(0)
   const [loading, setLoading] = useState(false);
-
+  const [message, setMessage] = useState();
 
   const { socket } = useSelector(store => store.socketSlice);
   useEffect(() => {
     setLoading(true);
-    if (!socket) {
-      console.error('Socket not initialized');
-      return;
-    }
-
-    socket.emit('get_message', { selectedUser: AllDetails._id, localUser: localUserId });
-    
-    const handleMessage = (data) => {
-      const messages = data.messages.messageId;
-      const unseenCount = messages.filter(message => !message.seen && localUserId !== message.senderId._id).length;
-      setUnseen(unseenCount);
-      const lastMessage = messages[messages.length - 1];
-      setMessage(lastMessage);
-    };
-    
-    socket.on('messages_are', handleMessage);
+    const removeDuplicates = (array) => {
+      const uniqueObjects = array.reduce((acc, current) => {
+          acc.set(current.user, current);
+          return acc;
+      }, new Map());
+  
+      return Array.from(uniqueObjects.values());
+  };
+  
+  const uniqueArray = removeDuplicates(lastMessage);
+  
+  const setMsg = (uniqueArray) => {
+    const newArr = uniqueArray.filter((elm)=> elm.user === AllDetails._id);
+    return newArr[0];
+  }
+  setMessage(setMsg(uniqueArray));
 
     // Cleanup to avoid multiple listeners
     setLoading(false);
     return () => {
-      socket.off('messages_are', handleMessage);
+      
     };
-  }, [socket, AllDetails._id, localUserId]);
+  }, [socket, AllDetails._id, localUserId, lastMessage]);
 
   const selectUser = (data) => {
     dispatch(userDetailAction.setSelectedUser(data))
