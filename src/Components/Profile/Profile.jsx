@@ -223,8 +223,8 @@ const Profile = () => {
                <div className='post_img_div overflow-hidden min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'>
                  <img src={elm.postId.postimage} alt="" className='rounded-lg min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'/>
                </div>
-               <div className='relative max-w-[88%] min-w-[88%] min-h-[4rem] max-h-[5rem] overflow-hidden'>
-                 <label htmlFor="" className='text-justify opacity-60 ' style={postSeeMoreStyle}>
+               <div className='relative max-w-[88%] min-h-[4rem] max-h-[5rem] overflow-hidden'>
+                 <label htmlFor="" className='inline-block max-w-[90%] opacity-60 ' style={postSeeMoreStyle}>
                    {elm.postId.posttitle}
                  </label>
                </div>
@@ -328,7 +328,7 @@ const ProfileSection = (props) => {
             <label htmlFor="">{props.icon}</label>
             <div className='ml-2 w-full'>
               <div className='relative '>
-                <label htmlFor="" className='font-normal'>{props.subTitle}</label>
+                <label htmlFor="" className='font-normal inline-block max-w-[90%]'>{props.subTitle}</label>
                 <label onClick={()=>handleDelete(props.uniqueId, props.title, props.userId)} htmlFor="" className="hover:bg-[#ddd] absolute right-6 transition-all p-3 cursor-pointer rounded-full"><MdDelete color='red' fontSize={'1.3rem'}/></label>
               </div>
               <p htmlFor="" className='opacity-50 mt-[-.1rem]'>{props.description}</p>
@@ -471,7 +471,7 @@ const ProfileSection = (props) => {
       <DialogTrigger onClick={()=>setIsDataSaved(false)} asChild className=''>
         <label htmlFor="" className="hover:bg-[#ddd] transition-all cursor-pointer ">{props.type==='plus'?<IoMdAdd fontSize={'1.4rem'}/>:<GoPencil fontSize={'1.4rem'}/>}</label>
       </DialogTrigger>
-      <DialogContent falseIsDataSaved={falseIsDataSaved} className="sm:max-w-[425px]">
+      <DialogContent falseIsDataSaved={falseIsDataSaved} className="dialog_content sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{props.type==='plus'?props.title:"Edit " + props.title}</DialogTitle>
           <DialogDescription>

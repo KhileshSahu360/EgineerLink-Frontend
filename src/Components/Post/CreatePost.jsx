@@ -102,7 +102,7 @@ const CreatePost = (props) => {
       <DialogContent className="dialog_content sm:max-w-[425] pb-0">
         <DialogHeader>
           <DialogTitle className="flex gap-2 items-center">
-            <img className="rounded-full h-12" src={props.profileImage} alt="" />
+            <img className="rounded-full size-12" src={props.profileImage} alt="" />
             <div className="flex-col">
               <div>
                 <label htmlFor="">{props.name}</label>
