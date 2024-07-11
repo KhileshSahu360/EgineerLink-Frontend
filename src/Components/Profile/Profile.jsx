@@ -27,7 +27,7 @@ import Toastify, { ErrorToastify } from '../Toastify/Toastify';
 import CreatePost  from '../Post/CreatePost';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { userDetailAction } from '../Store/Store';
+import { userDetailAction, postAction } from '../Store/Store';
 import axios from 'axios';
 
 
@@ -54,9 +54,26 @@ const Profile = () => {
   const [followers, setFollowers] = useState(0);
   const [post, setPost] = useState([]);
   const userId = localStorage.getItem('v09userInfoId');
+  const { userData } = useSelector(store => store.postSlice)
+  console.log('profile userData',userData);
   useEffect(()=>{
     if(userId){
-      getUserData();
+      if(!userData?._id){
+        getUserData();
+      }else{
+        const { name:dbName, _id, location:dbLocation, post:dbPost, about:dbAbout, heading:dbHeading, email, avatar, experience:dbExperience, education:dbEducation, skill:dbSkill, followers:dbFollowers} = userData;
+      
+      setEducation(dbEducation);
+      setExperience(dbExperience);
+      setSkill(dbSkill);
+      setAbout(dbAbout);
+      setName(dbName);
+      setHeading(dbHeading);
+      setProfileImage(avatar);
+      setLocation(dbLocation);
+      setFollowers(dbFollowers);
+      setPost(dbPost);  
+      }
     }
     if(aboutContentRef){
       setShowSeeMoreButton(aboutContentRef.current.scrollHeight !== aboutContentRef.current.clientHeight)
@@ -78,7 +95,7 @@ const Profile = () => {
     const { user } = response;
     if(user){
       const { name:dbName, _id, location:dbLocation, post:dbPost, about:dbAbout, heading:dbHeading, email, avatar, experience:dbExperience, education:dbEducation, skill:dbSkill, followers:dbFollowers} = user;
-    
+      dispatch(postAction.setUserData(user));
       setEducation(dbEducation);
       setExperience(dbExperience);
       setSkill(dbSkill);
@@ -217,8 +234,8 @@ const Profile = () => {
         {
           post && post?.length > 0 ? 
           post.map((elm)=>{
-            return <div className='relative'>
-              <Link key={elm.postId._id} to={`/seepost/${elm.postId._id}/${userId}`} className='pl-7 pt-10 items-center flex gap-3 relative'>
+            return <div className='relative' key={elm.postId._id}>
+              <Link  to={`/seepost/${elm.postId._id}/${userId}`} className='pl-7 pt-10 items-center flex gap-3 relative'>
                <label htmlFor="" className='absolute top-[14%] text-[.8rem] opacity-50'>{name} posted this</label>
                <div className='post_img_div overflow-hidden min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'>
                  <img src={elm.postId.postimage} alt="" className='rounded-lg min-h-[4rem] min-w-[4rem] max-h-[5rem] max-w-[5rem]'/>

@@ -11,11 +11,11 @@ import ShowMessage from "./ShowMessage";
 import MessageCont from "./MessageCont";
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
-import { userDetailAction, socketAction } from '../Store/Store.jsx'
-import { CircleLoader } from '../Loader/Loader.jsx'
+import { userDetailAction, socketAction, dataFetchedStatusAction, messageAction } from '../Store/Store.jsx'
 import Badge from '@mui/material/Badge';
 import Stack from '@mui/material/Stack';
 import MailIcon from '@mui/icons-material/Mail';
+import { CircleLoader } from "../Loader/Loader.jsx";
 
 const Message = () => {
   const dispatch = useDispatch();
@@ -23,14 +23,24 @@ const Message = () => {
   const [message, setMessage] = useState([]);
   const [localUserData, setLocalUserData] = useState();
   const { user, selectedUser } = useSelector(store => store.userDetailSlice)
+  const { messageDataStatus } = useSelector(store => store.dataFetchedStatusSlice)
+  const { filterChatList, lastMessage } = useSelector(store => store.messageSlice)
+  const { userData } = useSelector(store => store.postSlice)
   const [userChatList, setUserChatList] = useState(null); 
-  const [filterChatList, setFilterChatList] = useState(null); 
   const [inputSearchText, setInputSearchText] = useState('');
   const [nouserFoundMsg, setNouserFoundMsg] = useState(false);
-  const [lastMessage, setLastMessage] = useState([]);
+  const [loading, setLoading] = useState(false);
   const backend_url = import.meta.env.VITE_BACKEND_URL_SOCKET;
+  let socketConnection;
   useEffect(()=>{
-     const socketConnection = io(`${backend_url}`,{
+    if(!messageDataStatus && localUserData)  {
+      getChatList();
+    }
+  },[localUserData])
+
+  const getChatList = () => {
+    setLoading(true);
+     socketConnection = io(`${backend_url}`,{
       auth:{
         localUserId : localUserData?._id
       }
@@ -41,16 +51,16 @@ const Message = () => {
       return rs;
     })
     setUserChatList(newUserChatList);
-    setFilterChatList(newUserChatList);
+    dispatch(messageAction.setFilterChatList(newUserChatList));
 
 
     var filteredLastMsg = [];
-    console.log(newUserChatList)
     newUserChatList.map((elm)=>{
+      console.log('local',localUserData?._id)
+      console.log('niche',elm?._id);
       socketConnection.emit('get_message', { selectedUser: elm?._id, localUser: localUserData?._id });
       
       const handleMessage = (data) => {
-        console.log('run')
         const messages = data.messages.messageId;
         const unseenCount = messages.filter(message => !message.seen && localUserData?._id !== message.senderId._id).length;
         const lastMsg = messages[messages.length - 1];
@@ -64,8 +74,8 @@ const Message = () => {
         }
         const newMsg = {...lastMsg, user};
         filteredLastMsg = [...filteredLastMsg, newMsg]
-        // console.log(filteredLastMsg)
-        setLastMessage(filteredLastMsg);
+        console.log(filteredLastMsg)
+        dispatch(messageAction.setLastMessage(filteredLastMsg));
       };
       socketConnection.on('messages_are', handleMessage);
     })
@@ -75,17 +85,20 @@ const Message = () => {
     socketConnection.on('online_users',(data)=>{
       dispatch(userDetailAction.setOnlineUsers(data));
       })
+      
+      console.log(messageDataStatus)
+      dispatch(dataFetchedStatusAction.setMessageDataStatus(messageDataStatus));
 
-      return ()=>{
-      dispatch(userDetailAction.setSelectedUser({}));
-      // socketConnection.off('messages_are', handleMessage);
-      socketConnection.disconnect();
-    }
-  },[localUserData])
+      setLoading(false);
+  }
   
   useEffect(()=>{
     setLocalUserData(user)
-
+    return ()=>{
+      dispatch(userDetailAction.setSelectedUser({}));
+      // socketConnection.off('messages_are', handleMessage);
+      // socketConnection.disconnect();
+    }
   },[user])
 
   const searchUser = (event) => {
@@ -96,7 +109,7 @@ const Message = () => {
     ?  userChatList.filter(user =>
       user.name.toLowerCase().includes(searchTerm)
     ) : userChatList 
-    setFilterChatList(filtered);
+    dispatch(messageAction.setFilterChatList(filtered));
     if(filtered.length <= 0) setNouserFoundMsg(true);
   }
   return (
@@ -131,8 +144,8 @@ const Message = () => {
 
         <div >
             {
-              lastMessage?.length > filterChatList?.length * 2 && filterChatList?.length > 0 ? filterChatList.map((elm,index)=>{
-                return  <ChatList key={elm._id} localUserId={localUserData._id} lastMessage={lastMessage}  AllDetails={elm} selectedUser={selectedUser}/>
+              !loading ? lastMessage?.length > filterChatList?.length * 2 && filterChatList?.length > 0 ? filterChatList.map((elm,index)=>{
+                return  <ChatList key={elm?._id} localUserId={localUserData?._id} lastMessage={lastMessage}  AllDetails={elm} selectedUser={selectedUser}/>
                 
               })
               : !nouserFoundMsg ? <div className="flex flex-col items-center">
@@ -142,6 +155,9 @@ const Message = () => {
               : <div className="flex flex-col items-center">
                   <label htmlFor="" className="-mt-1">No user Found!</label>
               </div> 
+              : <div className="flex justify-center items-center p-8">
+                <CircleLoader color={'#b200b5'} size={20}/>
+              </div>
               }
         </div>
       </div>

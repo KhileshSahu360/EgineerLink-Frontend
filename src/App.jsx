@@ -42,7 +42,6 @@ const cookies = cookieString.split('; ');
   const isTokenValid = async() => {
     setLoading(true);
     const rawResponse = await fetch(`${backend_url}istokenvalid`,{
-    // const rawResponse = await fetch(`http://localhost:3000/istokenvalid`,{
       method:'GET',
       headers:{
         'Content-Type' : 'application/json',

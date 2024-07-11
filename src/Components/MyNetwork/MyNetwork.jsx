@@ -16,41 +16,40 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { userDetailAction } from "../Store/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { userDetailAction, myNetworkAction, dataFetchedStatusAction, postAction } from "../Store/Store";
+import { CircleLoader } from "../Loader/Loader";
 
 const MyNetwork = () => {
   document.title = "My-Network"
+  const { localUserData, allUserDataForPeople } = useSelector(store => store.myNetworkSlice)
+  const { myNetworkDataStatus } = useSelector(store => store.dataFetchedStatusSlice)
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const localUserId = localStorage.getItem('v09userInfoId');
   const navigate = useNavigate();
   const [item, setItem] = useState([])
   const [hasMore, setHasMore] = useState(true);
   const [allUserData, setAllUserData] = useState(null);
-  const [localUserData, setLocalUserData] = useState(null);
-  const [allUserDataForPeople, setAllUserDataForPeople] = useState(null);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
-  const fetchData = () => {
-    setTimeout(()=>{
-      const newItem = Array.from({length:20},(_,i)=>`Item ${item.length + i + 1}`);
-      setItem(prevItem=>[...prevItem,...newItem]);
-      if(item.length>100){
-        setHasMore(false);
-      }
-    },1000);
-  }
+ 
   useEffect(()=>{
+    if(!myNetworkDataStatus){
       getData();
+    }
   },[])
   const getData = async() => {
+    setLoading(true);
     const users = await getUsers();
     const localUser = await getLocalUserData();
     if(users.length > 0 && localUser){
       const newUsers = users.filter((elm)=>{
         return !localUser.following.some(obj => obj._id === elm._id);
       })
-      setAllUserDataForPeople(newUsers);
+      dispatch(myNetworkAction.setAllUserDataForPeople(newUsers))
     }
+    setLoading(false);
+    dispatch(dataFetchedStatusAction.setMyNetworkDataStatus(myNetworkDataStatus))
   }
   const getUsers = async() => {
     try{
@@ -68,7 +67,7 @@ const MyNetwork = () => {
     try{
       const response = await axios.get(`${backend_url}user/getuserdata/${localUserId}`)
       if(response.status === 200 && response.data.user){
-        setLocalUserData(response.data.user);
+        dispatch(myNetworkAction.setLocalUserData(response.data.user));
         dispatch(userDetailAction.setDetail(response.data.user));
         return response.data.user;
       }
@@ -93,12 +92,15 @@ const MyNetwork = () => {
             <CardTitle>Follower's</CardTitle>
           </CardHeader>
           {
-            localUserData && localUserData.followers.length >0 ? localUserData.followers.map((elm)=>{
-              return <FollowerDesign localUserData={localUserData} localUserId={localUserId} _id={elm._id} name={elm.name} heading={elm.heading} avatar={elm.avatar} getData={getData}/>
+            !loading ? localUserData && localUserData.followers.length >0 ? localUserData.followers.map((elm)=>{
+              return <FollowerDesign key={elm._id} localUserData={localUserData} localUserId={localUserId} _id={elm._id} name={elm.name} heading={elm.heading} avatar={elm.avatar} getData={getData}/>
             })
           :
             <div className="text-center pb-4">
               <label htmlFor="" className="font-bold">No Follwers!</label>
+            </div>
+           :   <div className="flex justify-center items-center pb-10">
+                <CircleLoader color={'blue'} size={20}/>
             </div>
           }
           </Card>
@@ -109,13 +111,16 @@ const MyNetwork = () => {
             <CardTitle>Following</CardTitle>
           </CardHeader>
           {
-            localUserData && localUserData.following.length >0 ? localUserData.following.map((elm)=>{
-              return <FollowingDesign localUserData={localUserData} localUserId={localUserId} _id={elm._id} name={elm.name} heading={elm.heading} avatar={elm.avatar} getData={getData}/>
+            !loading ? localUserData && localUserData.following.length >0 ? localUserData.following.map((elm)=>{
+              return <FollowingDesign key={elm._id} localUserData={localUserData} localUserId={localUserId} _id={elm._id} name={elm.name} heading={elm.heading} avatar={elm.avatar} getData={getData}/>
             })
           :
             <div className="text-center pb-4">
               <label htmlFor="" className="font-bold">No Following!</label>
             </div>
+          :   <div className="flex justify-center items-center pb-10">
+              <CircleLoader color={'blue'} size={20}/>
+          </div>
           }
         </Card>
       </TabsContent>
@@ -125,10 +130,19 @@ const MyNetwork = () => {
             <CardTitle>People's</CardTitle>
               <div className="people_container grid grid-cols-3 w-full gap-4 place-items-center pt-4">
        
-              {allUserDataForPeople && allUserDataForPeople.length > 0 &&  allUserDataForPeople.map((elm)=>{
+              {!loading ? allUserDataForPeople && allUserDataForPeople.length > 0 ?  allUserDataForPeople.map((elm)=>{
                 
                 return <PeopleCardDesign key={elm._id} getData={getData} localUserData={localUserData} localUserId={localUserId} name={elm.name} avatar={elm.avatar} heading={elm.heading} _id={elm._id}/>
-              })}
+              })
+            :
+              <div className="text-center pb-4">
+                 <label htmlFor="" className="font-bold">No Peoples!</label>
+              </div>
+            :   <div className="flex justify-center items-center pb-4 col-span-3">
+              <CircleLoader color={'blue'} size={20}/>
+            </div>
+            }
+
             </div>
           </CardHeader>
         </Card>
@@ -139,6 +153,7 @@ const MyNetwork = () => {
 
 const FollowerDesign = (props) => {
   const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const dispatch = useDispatch();
   useEffect(()=>{
   },[props])
   const unFollowHandler = async(localUserId, newUserId) => {
@@ -184,6 +199,9 @@ const FollowerDesign = (props) => {
 const FollowingDesign = (props) => {
   const [isFollowed, setIsFollowed] = useState(true);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const { getOnlyUserData } = useSelector(store => store.postSlice)
   useEffect(()=>{
     const res = props.localUserData.following.some(obj => obj._id === props._id);
     // const res = props.localUserData.following.includes(props._id);
@@ -194,6 +212,7 @@ const FollowingDesign = (props) => {
       if(isFollowed){
         const response = await axios.put(`${backend_url}user/unfollowuser/${localUserId}/${newUserId}`);
         props.getData();
+        dispatch(postAction.setGetOnlyUserData(getOnlyUserData))
       }else{
         const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${newUserId}`);
         props.getData();
@@ -233,6 +252,9 @@ const FollowingDesign = (props) => {
 const PeopleCardDesign = (props) => {
   const [isFollowed, setIsFollowed] = useState(null);
   const backend_url = import.meta.env.VITE_BACKEND_URL;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { getOnlyUserData } = useSelector(store => store.postSlice)
   useEffect(()=>{
     // const res = props.localUserData.following.some(obj => obj._id === props._id);
     // const res = props.localUserData.following.includes(props._id);
@@ -246,6 +268,7 @@ const PeopleCardDesign = (props) => {
       }else{
         const response = await axios.put(`${backend_url}user/followuser/${localUserId}/${newUserId}`);
         props.getData();
+        dispatch(postAction.setGetOnlyUserData(getOnlyUserData))
       }
     }catch(error){
       navigate('/servererror')

@@ -11,7 +11,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import Loader, { FadLoader } from "../Loader/Loader";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { userDetailAction } from "../Store/Store";
+import { userDetailAction, dataFetchedStatusAction, postAction } from "../Store/Store";
+import { useSelector } from "react-redux";
 import { AlertDialog } from "../ui/alert-dialog";
 import Logout from "../Profile/Logout";
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -42,12 +43,10 @@ function Postcont(props) {
 export default function Home() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const [isPostResult, setIsPostResult] = React.useState(false);
-    const [isUserResult, setIsUserResult] = React.useState(false);
+    const { homeDataStatus } = useSelector(store => store.dataFetchedStatusSlice);
+    const { postData, isPostResult, isUserResult, userData, getOnlyUserData } = useSelector(store => store.postSlice)
     const [isLoading, setIsLoading] = React.useState(false);
-    const [userData, setUserData] = React.useState({});
-    const [postData, setPostData] = React.useState([]);
+    const [DumyPostData, setDumyPostData] = React.useState([]);
     const [localUserId, setLocalUserId] = React.useState(() => localStorage.getItem('v09userInfoId'));
     const [hasMore, setHasMore] = React.useState(true);
     const [excludeIds, setExcludeIds] = React.useState([]);
@@ -69,16 +68,20 @@ export default function Home() {
       }, []);
   
       React.useEffect(() => {
-        if (localUserId) {
-            setIsLoading(true);
-          getUserData();
-          getAllPost();
-          setIsLoading(false);
-
+        if(!homeDataStatus){
+         if (localUserId) {
+                setIsLoading(true);
+                getAllPost(true);
+                getUserData();
+                setIsLoading(false);
+            }
+        }
+        if(getOnlyUserData){        
+            getUserData();
         }
       }, [localUserId]);
   
-    const getAllPost = async() => {
+    const getAllPost = async(preventOrNot) => {
         try{
         const response = await fetch(`${backend_url}post/getallpost`,{
             method : 'post',
@@ -91,11 +94,15 @@ export default function Home() {
         if(!data.error){
         const newPosts = data.post;
         // setPostData((prevPosts) => [...prevPosts, ...newPosts]);
-        setPostData((prevPosts) => {
+        let dummyData;
+        setDumyPostData((prevPosts) => {
             const existingPostIds = new Set(prevPosts.map(post => post._id));
             const filteredNewPosts = newPosts.filter(post => !existingPostIds.has(post._id));
-            return [...prevPosts, ...filteredNewPosts];
+            dummyData =  [...prevPosts, ...filteredNewPosts];
+            return dummyData;
         });
+
+        dispatch(postAction.setPostData(dummyData));
 
         setExcludeIds((prevExcludeIds) => [...prevExcludeIds, ...newPosts.map(post => post._id)]);
         
@@ -106,47 +113,53 @@ export default function Home() {
     }catch(error){
         navigate('/servererror');
     }
-    setIsPostResult(true);
+    if(preventOrNot){
+        dispatch(postAction.setIsPostResult(true))
+        dispatch(dataFetchedStatusAction.setHomeDataStatus(homeDataStatus))
+    }
+   
 }
       
 
     const getUserData = async() => {
         try{
-          const rawResponse = await fetch(`${backend_url}user/getuserdata/${localUserId}`,{
+            const rawResponse = await fetch(`${backend_url}user/getuserdata/${localUserId}`,{
             method : 'get',
             headers : {
-              'Content-Type' : 'application/json'
+                'Content-Type' : 'application/json'
             }
-          })
-          const response = await rawResponse.json();
-          const { user } = response;
-          if(user){
-            setUserData(user);
-        
+        })
+        const response = await rawResponse.json();
+        const { user } = response;
+        if(user){
+            dispatch(postAction.setUserData(user))
           }else{
             navigate('/signin');
           }
         }catch(error){
           navigate('/404error');
         }
-        setIsUserResult(true);
+        dispatch(postAction.setIsUserResult(true));
+        if(getOnlyUserData){
+            dispatch(postAction.setGetOnlyUserData(getOnlyUserData))
         }
+    }
 
-        const fetchMorePostData = () => {
-            getAllPost();
+        const fetchMorePostData = (preventOrNot) => {
+            getAllPost(preventOrNot);
         }
     return (
         <>
-            <InfiniteScroll
-                dataLength={postData.length} //This is important field to render the next data
-                next={fetchMorePostData}
+            {/* <InfiniteScroll
+                dataLength={postData?.length} //This is important field to render the next data
+                next={fetchMorePostData(false)}
                 hasMore={hasMore}
                 loader={<h4 className="text-center ">Loading...</h4>}
                 endMessage={
                     <p className="no_post mt-4 ml-[10rem]" style={{ textAlign: 'center' }}>
                     <b>No more post!</b>
                     </p>
-                }>
+                }> */}
                 {!isLoading ? <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={4}>
@@ -190,7 +203,7 @@ export default function Home() {
                         <FadLoader color={'gray'}/>
                     </div>
                 }                  
-                </InfiniteScroll> 
+                {/* </InfiniteScroll>  */}
                 
                 </>
     );

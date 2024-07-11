@@ -32,7 +32,7 @@ function Post(props) {
         setLocalUserId(props.postData.localUserId);
         const res = props.postData.likedby.includes(props.postData.localUserId);
         setIsLiked(res);
-        const result = props.postData.localUserData.following.some(obj => obj._id);
+        const result = props.postData.localUserData.following.some(obj => obj._id === props.postData.author._id);
         setIsFollowed(result);
         const isOwnResult = props.postData.localUserId === props.postData.author._id;
         setIsOwnPost(isOwnResult);

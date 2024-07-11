@@ -8,6 +8,5 @@ export const initSocket = async () => {
         transports: ['websocket'],
     };
     return io(`${import.meta.env.VITE_BACKEND_URL}collabcode`, options);
-    // return io(`http://localhost:3000/collabcode`, options);
 };
  
